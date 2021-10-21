@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+	<title>신한금융투자 퍼블리싱</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+	<link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:100,300,400,500,700,900&amp;subset=korean" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="../css/common.css">
+</head>
+<body>
+	<div class="wrap">
+		<h1 class="title">신한금융투자</h1>
+		<div class="con">
+
+			<button class="con_tit">사용자 관리<span class="arr on"><span class="arr_bg"></span><span class="arr_bd"></span></span></button>
+			<ul class="con_list on">
+				<li><a href="sub01_01_01.html">사용자 / 목록</a></li>
+				<li><a href="sub01_01_02.html">사용자 / 등록</a></li>
+				<li><a href="sub01_02.html">권한그룹 관리</a></li>
+				<li><a href="sub01_03.html">라이선스 관리</a></li>
+				<li><a href="sub01_04.html">사용자 로그</a></li>
+			</ul>
+
+			<button class="con_tit">시스템 관리<span class="arr on"><span class="arr_bg"></span><span class="arr_bd"></span></span></button>
+			<ul class="con_list on">
+				<li><a href="sub02_01.html">외부시스템</a></li>
+				<li><a href="sub02_02.html">업무카테고리 관리</a></li>
+				<li><a href="sub02_03_01.html">공지사항 / 목록</a></li>
+				<li><a href="sub02_03_02.html">공지사항 / 등록</a></li>
+				<li><a href="sub02_04_01.html">FAQ / 목록</a></li>
+				<li><a href="sub02_04_02.html">FAQ / 등록</a></li>
+				<li><a href="sub02_05_01.html">분석게시판 / 목록</a></li>
+				<li><a href="sub02_05_02.html">분석게시판 / 등록</a></li>
+			</ul>
+
+			<button class="con_tit">프로젝트 관리<span class="arr on"><span class="arr_bg"></span><span class="arr_bd"></span></span></button>
+			<ul class="con_list on">
+				<li><a href="sub03_01_01.html">프로젝트 관리</a></li>
+				<li><a href="sub03_01_02.html">프로젝트 관리 등록</a></li>
+				<li><a href="sub03_02_01.html">보고서 / 관리</a></li>
+				<li><a href="sub03_02_02.html">보고서 / 등록</a></li>
+				<li><a href="sub03_03_01.html">보고서 권한 관리 / 목록</a></li>
+				<li><a href="sub03_03_02.html">보고서 권한 관리 / 등록</a></li>
+				<li><a href="sub03_04_01.html">외부 보고서 배포 관리 / 목록</a></li>
+				<li><a href="sub03_04_02.html">외부 보고서 배포 관리 / 등록</a></li>
+			</ul>
+
+		</div>
+	</div>
+
+	<script>
+		$(document).ready(function() {
+			$('.con_list a, .con_tit_a').click(function() {
+				window.open(this.href);
+				return false;
+			});
+			$('.con_tit').click(function() {
+				$(this).children('.arr').toggleClass('on').parent().next('.con_list').slideToggle(300);
+			});
+
+		});
+	</script>
+	<style type="text/css">
+
+		body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,textarea,p,blockquote,th,td,input,select,textarea,button {margin:0; padding:0; outline:none}
+		fieldset,img{border:0 none;}
+		dl,ul,ol,menu,li {list-style:none;}
+		input,select,textarea,button {vertical-align:middle;}
+		button {border:0 none;background-color:transparent;cursor:pointer}
+		body,th,td,input,select,textarea,button {font-family:'Noto Sans KR';}
+		body {font-size:62.5%;}
+		a {color:black; text-decoration:none;}
+		address {font-style:normal; font-weight:normal;}
+		table {border-collapse:collapse; }
+
+		.wrap {padding:30px;}
+		.title {text-align:center; margin:0 0 10px 0; color:#000; font-size:24px;}
+		.con {max-width:1130px; margin:0 auto;}
+		.con_tit {font-size:16px; background:#000; color:#fff; padding:12px 15px; position:relative; margin-top:20px; cursor:pointer; width:100%; text-align:left; display:block;}
+		.con_tit_a {font-size:16px; background:#e50278; color:#fff; padding:12px 15px; position:relative; margin-top:20px; cursor:pointer; text-align:left; display:block;}
+		.con_list {font-size:14px; display:none;}
+		.con_list.on {display:block;}
+		.con_list li {border-bottom:1px #CCC solid; padding:12px 15px;}
+		.con_list a {color:#666;}
+
+		.arr {background:#000; display:block; width:40px; height:40px; display:inline-block; position:absolute; vertical-align:middle; right:5px; top:50%; transform:translateY(-50%);}
+		.arr.on {transform:rotate(180deg); margin-top:-20px;}
+	  .arr_bg, .arr_bd {display:block; border:solid transparent; border-width:0 10px 0 10px; position:absolute; left:50%; top:50%; transform:translate(-50%, -50%);}
+	  .arr_bg {border-top:#000 10px solid; z-index:2; top:calc(50% - 1px);}
+	  .arr_bd {border-top:#fff 10px solid; z-index:1; top:calc(50% + 1px);}
+
+		a.red {color:#e50278;}
+		a.blue {color:blue;}
+
+	</style>
+
+</body>
+</html>

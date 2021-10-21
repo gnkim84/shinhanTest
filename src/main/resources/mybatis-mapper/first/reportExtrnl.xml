@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shinvest.ap.app.report.mapper.ReportExtrnlMapper">
+
+ 	<sql id="column">
+		tp.project_id,
+		tp.project_nm,
+		trea.aprv_id,
+		trea.report_id,
+		tr.report_nm,
+		trea.ver,
+		trea.extrnl_id,
+		tes.extrnl_nm,
+		trea.aprv_stat,
+		trea.aprv_dt,
+		trea.aprvr_id,
+		trea.rqst_resn,
+		trea.rjct_resn,
+		trea.use_yn,
+		trea.rgst_id,
+		trea.rgst_dt,
+		trea.modi_id,
+		trea.modi_dt 	
+ 	</sql>
+
+ 	<sql id="from">
+ 		FROM 
+			t_extrnl_sys tes,
+			t_project tp, 
+			t_report tr, 
+			t_report_extrnl_aprv trea  	
+ 	</sql>
+ 	
+	<sql id="where">
+		WHERE 
+			trea.report_id = tr.report_id 
+			AND tr.project_id = tp.project_id 
+			AND trea.extrnl_id = tes.extrnl_id 
+		<where>
+			<if test="searchKey != '' and searchKey == 'ALL' and searchValue != ''">
+				AND UPPER(tp.project_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%') OR UPPER(tr.report_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+			</if>
+			<if test="searchKey != '' and searchKey == 'projectNm' and searchValue != ''">
+				AND UPPER(tp.project_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+			</if>
+			<if test="searchKey != '' and searchKey == 'reportNm' and searchValue != ''">
+				AND UPPER(tr.report_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="pkWhere">
+		trea.aprv_id = #{aprvId}
+	</sql>
+	
+	<sql id="paging">
+		LIMIT #{pageSize} OFFSET (#{page} - 1) * #{pageSize}
+	</sql>
+
+	<sql id="order">
+		ORDER BY trea.aprv_id DESC
+	</sql> 
+	
+	<select id="selectReportExtrnlList" resultType="com.shinvest.ap.app.report.model.ReportExtrnlModel" parameterType="com.shinvest.ap.common.paging.Criteria">
+		SELECT
+		<include refid="column" /> 
+		<include refid="from" /> 
+		<include refid="where" />
+		<include refid="order" />
+		<include refid="paging" />  
+	</select>
+	
+	<select id="selectReportExtrnlListCount" resultType="int" parameterType="com.shinvest.ap.common.paging.Criteria">
+		SELECT
+			COUNT(*)
+		<include refid="from" /> 
+		<include refid="where" />
+	</select>
+
+	<select id="selectReportExtrnl" resultType="com.shinvest.ap.app.report.model.ReportExtrnlModel" parameterType="com.shinvest.ap.app.report.model.ReportExtrnlModel">
+		SELECT
+		<include refid="column" /> 
+		<include refid="from" />  
+		WHERE
+			<include refid="pkWhere" />
+			AND trea.report_id = tr.report_id 
+			AND tr.project_id = tp.project_id
+			AND trea.extrnl_id = tes.extrnl_id  
+	</select>
+	
+	<insert id="insertReportExtrnl" parameterType="com.shinvest.ap.app.report.model.ReportExtrnlModel">
+		INSERT INTO t_report_extrnl_aprv (
+			aprv_id,
+			report_id,
+			ver,
+			user_id,
+			aprv_stat,
+			aprv_dt,
+			aprvr_id,
+			rqst_resn,
+			rjct_resn,
+			use_yn,
+			rgst_id,
+			rgst_dt,
+			modi_id,
+			modi_dt
+		) VALUES (
+			#{aprvId},
+			#{reportId},
+			#{ver},
+			#{userId},
+			#{aprvStat},
+			#{aprvDt},
+			#{aprvrId},
+			#{rqstResn},
+			#{rjctResn},
+			#{useYn},
+			#{rgstId},
+			now(),
+			#{modiId},
+			now()
+		)
+	</insert>
+	
+	<update id="updateReportExtrnl" parameterType="com.shinvest.ap.app.report.model.ReportExtrnlModel">
+		UPDATE
+			t_report_extrnl_aprv trea
+		SET
+		<if test="reportId != null and !('').equals(reportId)">
+			report_id = #{reportId},
+		</if>
+		<if test="ver != null">	
+			ver = #{ver},
+		</if>
+		<if test="userId != null and !('').equals(userId)">	
+			user_id = #{userId},
+		</if>
+		<if test="aprvStat != null and !('').equals(aprvStat)">	
+			aprv_stat = #{aprvStat},
+		</if>
+		<if test="aprvDt != null and !('').equals(aprvDt)">	
+			aprv_dt = #{aprvDt},
+		</if>
+		<if test="aprvrId != null and !('').equals(aprvrId)">	
+			aprvr_id = #{aprvrId},
+		</if>	
+			rqst_resn = #{rqstResn},
+			rjct_resn = #{rjctResn},
+			use_yn = #{useYn},
+			modi_id = #{modiId},
+			modi_dt = now()
+	   WHERE
+			<include refid="pkWhere" />
+	</update>
+	
+	<delete id="deleteReportExtrnl" parameterType="com.shinvest.ap.app.report.model.ReportExtrnlModel">
+		DELETE FROM 
+			t_report_extrnl_aprv trea
+		WHERE
+			<include refid="pkWhere" />
+	</delete>   
+
+</mapper>

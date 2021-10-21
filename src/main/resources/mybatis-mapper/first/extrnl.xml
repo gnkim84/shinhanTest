@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shinvest.ap.app.extrnl.mapper.ExtrnlMapper">
+
+    <sql id="paging">
+limit #{pageSize} offset (#{page} - 1) * #{pageSize}
+    </sql>
+
+    <select id="selectList" resultType="com.shinvest.ap.app.extrnl.model.ExtrnlModel" parameterType="com.shinvest.ap.common.paging.Criteria">
+select
+    row_number() over () as rownum
+  , extrnl_id
+  , extrnl_nm
+  , extrnl_url
+  , extrnl_dsc
+  , use_yn
+  , rgst_id
+  , rgst_dt
+  , modi_id
+  , modi_dt
+from
+    t_extrnl_sys
+where
+    use_yn = 'Y'
+        <include refid="paging"></include>
+    </select>
+
+    <select id="selectListCount" resultType="int" parameterType="com.shinvest.ap.common.paging.Criteria">
+select count(*)
+from
+    t_extrnl_sys
+where use_yn = 'Y'
+    </select>
+
+    <select id="select" resultType="com.shinvest.ap.app.extrnl.model.ExtrnlModel" parameterType="com.shinvest.ap.app.extrnl.model.ExtrnlModel">
+select
+    extrnl_id
+  , extrnl_nm
+  , extrnl_url
+  , extrnl_dsc
+  , use_yn
+  , rgst_id
+  , rgst_dt
+  , modi_id
+  , modi_dt
+from
+    t_extrnl_sys
+where
+    extrnl_id = #{extrnlId}
+    </select>
+
+    <insert id="insert" parameterType="com.shinvest.ap.app.extrnl.model.ExtrnlModel">
+insert into t_extrnl_sys (
+    extrnl_id
+  , extrnl_nm
+  , extrnl_url
+  , extrnl_dsc
+  , use_yn
+  , rgst_id
+  , rgst_dt
+  , modi_id
+  , modi_dt
+) values (
+    #{extrnlId}
+  , #{extrnlNm}
+  , #{extrnlUrl}
+  , #{extrnlDsc}
+  , 'Y'
+  , #{rgstId}
+  , now()
+  , #{modiId}
+  , now()
+)
+    </insert>
+
+    <update id="update" parameterType="com.shinvest.ap.app.extrnl.model.ExtrnlModel">
+update t_extrnl_sys set
+    extrnl_nm = #{extrnlNm}
+  , extrnl_dsc = #{extrnlDsc}
+  , extrnl_url = #{extrnlUrl}
+  , modi_dt = now()
+  , modi_id = #{modiId}
+  , use_yn = 'Y'
+where
+    extrnl_id = #{extrnlId}
+    </update>
+
+    <delete id="delete" parameterType="com.shinvest.ap.app.extrnl.model.ExtrnlModel">
+update t_extrnl_sys set
+    use_yn = 'N'
+  , modi_dt = now()
+  , modi_id = #{modiId}
+where
+    extrnl_id = #{extrnlId}
+    </delete>
+</mapper>

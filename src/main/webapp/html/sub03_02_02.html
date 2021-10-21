@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>보고서 등록 | 프로젝트 관리 | 신한금융투자</title>
+  <link href="../css/common.css" rel="stylesheet" type="text/css" />
+  <script src="../js/jquery-1.12.4.js"></script>
+</head>
+
+<body>
+  <section class="content">
+
+    <div class="content_tit">
+      <h1 class="content_h1">보고서 등록</h1>
+      <ul class="content_nav">
+        <li>HOME</li>
+        <li>프로젝트 관리</li>
+        <li>보고서 등록</li>
+      </ul>
+    </div>
+
+    <form>
+      <table class="tb02" summary="프로젝트명, 보고서명, 대시보드 URL, 비고, 파라미터값, 대시보드 설명, 요청사항, 보고서 유형, 보고서 성격, 보기 공유자, 관리권한 소유자, 부서, 업데이트 스케쥴, 등록일, 최초 작성자, 노출 썸네일 선택, 보고서 미리보기, 활성화 여부에 대한 내용입니다.">
+        <caption class="hidden">보고서 등록 목록</caption>
+        <colgroup>
+          <col style="width:12.5%">
+          <col style="width:87.5%">
+        </colgroup>
+        <tbody>
+          <tr>
+            <th scope="row"><label for="data01">프로젝트 유형</label></th>
+            <td>
+              <div class="select half">
+                <select name="data01" id="data01">
+                  <option value="프로젝트 1">프로젝트 1</option>
+                </select>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">보고서명</th>
+            <td>전월대비 앱 MAU 동향</td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="data02">대시보드 URL</label></th>
+            <td>
+              <div class="tb_wb_wrap">
+                <input type="text" class="input" id="data02" value="https://aaa.com">
+                <button type="button" class="btn small grayr wide fr">보고서 검증</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">비고</th>
+            <td>전월대비 앱 MAU 동향</td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="data03">파라미터값</label></th>
+            <td>
+              <div class="tb_mr_wrap">
+                <input type="text" class="input half" id="data03" value="파라미터명">
+                <div class="input_date">
+                  <label class="hidden" for="date">날짜</label><input type="text" class="input" id="date" value="2020.10.13"><button type="button" class="btn_date">날짜 검색</button>
+                </div>
+                <div class="select wsmall">
+                  <label class="hidden" for="data04">달</label>
+                  <select name="data04" id="data04">
+                    <option value="10월">10월</option>
+                  </select>
+                </div>
+                <label class="hidden" for="data05">번호</label>
+                <input type="text" class="input wsmall" id="data05" value="525번">
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <th scope="row"><label for="data06">대시보드 설명</label></th>
+            <td><input type="text" class="input" id="data06"></td>
+          </tr>
+
+          <tr>
+            <th scope="row"><label for="data07">요청사항</label></th>
+            <td><input type="text" class="input" id="data07"></td>
+          </tr>
+
+          <tr>
+            <th scope="row"><label for="data08">보고서 유형</label></th>
+            <td>
+              <div class="radio_wrap">
+  							<div class="radio"><input type="radio" name="data08" id="data08_1" checked=""><label for="data08_1"><span class="icon"><span></span></span><span class="txt">그룹</span></label></div>
+                <div class="radio"><input type="radio" name="data08" id="data08_2"><label for="data08_2"><span class="icon"><span></span></span><span class="txt">부서</span></label></div>
+  							<div class="radio"><input type="radio" name="data08" id="data08_3"><label for="data08_3"><span class="icon"><span></span></span><span class="txt">기계학습</span></label></div>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <th scope="row">보고서 성격</th>
+            <td>
+              <div class="tb_mr_wrap">
+                <div class="select wsmall">
+                  <label class="hidden" for="data09">성격 유형1</label>
+                  <select name="data09" id="data09">
+                    <option value="성격1">성격1</option>
+                  </select>
+                </div>
+                <div class="select wsmall">
+                  <label class="hidden" for="data10">성격 유형2</label>
+                  <select name="data10" id="data10">
+                    <option value="성격2">성격2</option>
+                  </select>
+                </div>
+                <div class="select wsmall">
+                  <label class="hidden" for="data11">성격 유형3</label>
+                  <select name="data11" id="data11">
+                    <option value="성격3">성격3</option>
+                  </select>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <th scope="row"><label for="data12">보기 공유자</label></th>
+            <td><input type="text" class="input wmid mr10" id="data12" value="홍길동, 김라라"><button type="button" class="btn small grayr">검색</button></td>
+          </tr>
+
+          <tr>
+            <th scope="row"><label for="data13">관리권한 소유자</label></th>
+            <td><input type="text" class="input wmid mr10" id="data13" value="홍길동"><button type="button" class="btn small grayr">검색</button></td>
+          </tr>
+
+          <tr>
+            <th scope="row"><label for="data14">부서</label></th>
+            <td><input type="text" class="input wmid mr10" id="data14" value="마케팅"><button type="button" class="btn small grayr">검색</button></td>
+          </tr>
+
+          <tr>
+            <th scope="row">업데이트 스케쥴</th>
+            <td>매일 00시</td>
+          </tr>
+
+          <tr>
+            <th scope="row">등록일</th>
+            <td>-</td>
+          </tr>
+
+          <tr>
+            <th scope="row">최초 작성자</th>
+            <td>-</td>
+          </tr>
+
+          <tr>
+            <th scope="row">노출 썸네일 선택</th>
+            <td>
+              <div class="radio_swiper_wrap"><div class="radio_swiper">
+            		<div class="swiper-wrapper">
+                  <div class="swiper-slide">
+                    <div class="radio"><input type="radio" name="data15" id="data15_1" checked=""><label for="data15_1"><span class="icon"><span></span></span><span class="img"><img src="../images/img_thum01.png" alt="썸네일1"></span></label></div>
+                  </div>
+            			<div class="swiper-slide">
+                    <div class="radio"><input type="radio" name="data15" id="data15_2"><label for="data15_2"><span class="icon"><span></span></span><span class="img"><img src="../images/img_thum02.png" alt="썸네일2"></span></label></div>
+                  </div>
+            			<div class="swiper-slide">
+                    <div class="radio"><input type="radio" name="data15" id="data15_3"><label for="data15_3"><span class="icon"><span></span></span><span class="img"><img src="../images/img_thum03.png" alt="썸네일3"></span></label></div>
+                  </div>
+                  <div class="swiper-slide">
+                    <div class="radio"><input type="radio" name="data15" id="data15_4"><label for="data15_4"><span class="icon"><span></span></span><span class="img"><img src="../images/img_thum01.png" alt="썸네일1"></span></label></div>
+                  </div>
+            			<div class="swiper-slide">
+                    <div class="radio"><input type="radio" name="data15" id="data15_5"><label for="data15_5"><span class="icon"><span></span></span><span class="img"><img src="../images/img_thum02.png" alt="썸네일2"></span></label></div>
+                  </div>
+            			<div class="swiper-slide">
+                    <div class="radio"><input type="radio" name="data15" id="data15_6"><label for="data15_6"><span class="icon"><span></span></span><span class="img"><img src="../images/img_thum03.png" alt="썸네일3"></span></label></div>
+                  </div>
+            		</div>
+                <div class="swiper-button-next"></div><div class="swiper-button-prev"></div>
+            	</div></div>
+            </td>
+          </tr>
+
+          <tr>
+            <th scope="row">보고서 미리보기</th>
+            <td><a href="#none">https://aaa.com/1.jpg</a> </td>
+          </tr>
+
+          <tr>
+            <th scope="row"><label for="data01">활성화 여부</label></th>
+            <td>
+              <div class="select half">
+                <select name="data16" id="data16">
+                  <option value="활성화">활성화</option>
+                </select>
+              </div>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+
+      <div class="btn_wrap tr">
+        <button type="button" class="btn big blue">신청</button>
+        <button type="submit" class="btn big blue">저장</button>
+        <button type="button" class="btn big grayb">신청철회</button>
+      </div>
+    </form>
+
+  </section>
+
+  <link href="../css/swiper.css" rel="stylesheet" type="text/css" />
+  <script src="../js/swiper.js"></script>
+  <script type="text/javascript">
+    var swiper = new Swiper('.radio_swiper', {
+      slidesPerView: 3,
+      spaceBetween: 10,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+    });
+  </script>
+
+</body>
+
+</html>

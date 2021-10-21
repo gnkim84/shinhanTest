@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shinvest.ap.app.report.mapper.ReportAuthMapper">
+
+ 	<sql id="column">
+		tp.project_id,
+		tp.project_nm,
+		trra.aprv_id,
+		trra.report_id,
+		tr.report_nm,
+		tr.report_ty,
+		trra.ver,
+		trra.role_se,
+		trra.ref_ty,
+		trra.ref_id,
+		tu.user_nm,
+		tu.dept_code,
+		trra.aprv_stat,
+		trra.aprv_dt,
+		trra.aprvr_id,
+		trra.rqst_resn,
+		trra.rjct_resn,
+		trra.use_yn,
+		trra.rgst_id,
+		trra.rgst_dt,
+		trra.modi_id,
+		trra.modi_dt 	
+ 	</sql>
+
+ 	<sql id="from">
+ 		FROM 
+			t_user tu,
+			t_dept td, 
+			t_project tp, 
+			t_report tr, 
+			t_report_role_aprv trra  	
+ 	</sql>
+ 	
+	<sql id="where">
+		WHERE 
+			trra.report_id = tr.report_id 
+			AND tr.project_id = tp.project_id 
+			AND tu.user_id = trra.ref_id 
+			AND tu.dept_code = td.dept_code 
+		<where>
+			<if test="searchKey != '' and searchKey == 'ALL' and searchValue != ''">
+				AND UPPER(tp.project_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%') OR UPPER(tr.report_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+			</if>
+			<if test="searchKey != '' and searchKey == 'projectNm' and searchValue != ''">
+				AND UPPER(tp.project_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+			</if>
+			<if test="searchKey != '' and searchKey == 'reportNm' and searchValue != ''">
+				AND UPPER(tr.report_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="pkWhere">
+		trra.aprv_id = #{aprvId}
+	</sql>
+	
+	<sql id="paging">
+		LIMIT #{pageSize} OFFSET (#{page} - 1) * #{pageSize}
+	</sql>
+
+	<sql id="order">
+		ORDER BY trra.aprv_id DESC
+	</sql> 
+	
+	<select id="selectReportAuthList" resultType="com.shinvest.ap.app.report.model.ReportAuthModel" parameterType="com.shinvest.ap.common.paging.Criteria">
+		SELECT
+		<include refid="column" /> 
+		<include refid="from" /> 
+		<include refid="where" />
+		<include refid="order" />
+		<include refid="paging" />  
+	</select>
+	
+	<select id="selectReportAuthListCount" resultType="int" parameterType="com.shinvest.ap.common.paging.Criteria">
+		SELECT
+			COUNT(*)
+		<include refid="from" /> 
+		<include refid="where" />
+	</select>
+
+	<select id="selectReportAuth" resultType="com.shinvest.ap.app.report.model.ReportAuthModel" parameterType="com.shinvest.ap.app.report.model.ReportAuthModel">
+		SELECT
+		<include refid="column" /> 
+		<include refid="from" />  
+		WHERE
+			<include refid="pkWhere" />
+			AND trra.report_id = tr.report_id 
+			AND tr.project_id = tp.project_id
+			AND tu.user_id = trra.ref_id 
+			AND tu.dept_code = td.dept_code			 
+	</select>
+	
+	<insert id="insertReportAuth" parameterType="com.shinvest.ap.app.report.model.ReportAuthModel">
+		INSERT INTO t_report_role_aprv (
+			aprv_id,
+			report_id,
+			ver,
+			role_se,
+			ref_ty,
+			ref_id,
+			aprv_stat,
+			aprv_dt,
+			aprvr_id,
+			rqst_resn,
+			rjct_resn,
+			use_yn,
+			rgst_id,
+			rgst_dt,
+			modi_id,
+			modi_dt
+		) VALUES (
+			#{aprvId},
+			#{reportId},
+			#{ver}::numeric,
+			#{roleSe},
+			#{refTy},
+			#{refId},
+			#{aprvStat},
+			#{aprvDt},
+			#{aprvrId},
+			#{rqstResn},
+			#{rjctResn},
+			#{useYn},
+			#{rgstId},
+			now(),
+			#{modiId},
+			now()
+		)
+	</insert>
+	
+	<update id="updateReportAuth" parameterType="com.shinvest.ap.app.report.model.ReportAuthModel">
+		UPDATE
+			t_report_role_aprv trra
+		SET
+		<if test="reportId != null and !('').equals(reportId)">
+			report_id = #{reportId},
+		</if>
+		<if test="ver != null">	
+			ver = ver + #{ver}::numeric,
+		</if>
+		<if test="roleSe != null and !('').equals(roleSe)">	
+			role_se = #{roleSe},
+		</if>
+		<if test="refTy != null and !('').equals(refTy)">	
+			ref_ty = #{refTy},
+		</if>
+		<if test="refId != null and !('').equals(refId)">	
+			ref_id = #{refId},
+		</if>
+		<if test="aprvStat != null and !('').equals(aprvStat)">	
+			aprv_stat = #{aprvStat},
+		</if>
+		<if test="aprvDt != null and !('').equals(aprvDt)">	
+			aprv_dt = #{aprvDt},
+		</if>
+		<if test="aprvrId != null and !('').equals(aprvrId)">	
+			aprvr_id = #{aprvrId},
+		</if>	
+			rqst_resn = #{rqstResn},
+			rjct_resn = #{rjctResn},
+			use_yn = #{useYn},
+			modi_id = #{modiId},
+			modi_dt = now()
+	   WHERE
+			<include refid="pkWhere" />
+	</update>
+	
+	<delete id="deleteReportAuth" parameterType="com.shinvest.ap.app.report.model.ReportAuthModel">
+		DELETE FROM 
+			ptl.t_report_role_aprv trra
+		WHERE
+			<include refid="pkWhere" />
+	</delete>   
+
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+  <settings>
+    <setting name="mapUnderscoreToCamelCase" value="true"/>
+    <setting name="cacheEnabled" value="false"/>
+    <setting name="jdbcTypeForNull" value="NULL"/>
+    <setting name="useGeneratedKeys" value="false"/>
+  </settings>
+  <typeAliases>
+    <typeAlias alias="map" type="java.util.Map"/>
+    <typeAlias alias="faqModel" type="com.shinvest.ap.app.board.model.FaqModel"/>
+    <typeAlias alias="noticeModel" type="com.shinvest.ap.app.board.model.NoticeModel"/>
+    <typeAlias alias="codeModel" type="com.shinvest.ap.app.code.model.CodeModel"/>
+    <typeAlias alias="deptClModel" type="com.shinvest.ap.app.dept.model.DeptClModel"/>
+    <typeAlias alias="extrnlModel" type="com.shinvest.ap.app.extrnl.model.ExtrnlModel"/>
+    <typeAlias alias="fileModel" type="com.shinvest.ap.app.file.model.FileModel"/>
+    <typeAlias alias="licenseModel" type="com.shinvest.ap.app.license.model.LicenseModel"/>
+    <typeAlias alias="logModel" type="com.shinvest.ap.app.audit.model.LogModel"/>
+    <typeAlias alias="memberCriteria" type="com.shinvest.ap.app.member.model.MemberCriteria"/>
+    <typeAlias alias="memberModel" type="com.shinvest.ap.app.member.model.MemberModel"/>
+    <typeAlias alias="menuModel" type="com.shinvest.ap.app.menu.model.MenuModel"/>
+    <typeAlias alias="projectCriteria" type="com.shinvest.ap.app.project.model.ProjectCriteria"/>
+    <typeAlias alias="projectModel" type="com.shinvest.ap.app.project.model.ProjectModel"/>
+    <typeAlias alias="reportAuthModel" type="com.shinvest.ap.app.report.model.ReportAuthModel"/>
+    <typeAlias alias="reportExtrnlModel" type="com.shinvest.ap.app.report.model.ReportExtrnlModel"/>
+    <typeAlias alias="reportModel" type="com.shinvest.ap.app.report.model.ReportModel"/>
+    <typeAlias alias="roleModel" type="com.shinvest.ap.app.role.model.RoleModel"/>
+    <typeAlias alias="roleGroupModel" type="com.shinvest.ap.app.role.model.RoleGroupModel"/>
+    <typeAlias alias="scheduleLogModel" type="com.shinvest.ap.app.schedule.model.ScheduleLogModel"/>
+    <typeAlias alias="scheduleModel" type="com.shinvest.ap.app.schedule.model.ScheduleModel"/>
+    <typeAlias alias="wrkModel" type="com.shinvest.ap.app.wrkCat.model.WrkModel"/>
+    <typeAlias alias="aprvModel" type="com.shinvest.ap.app.aprv.model.AprvModel"/>
+    
+    <typeAlias alias="workbookModel" type="com.shinvest.ap.schedule.model.WorkbookModel"/>
+  </typeAliases>
+  <typeHandlers>
+    <typeHandler javaType="org.json.JSONObject" jdbcType="VARCHAR" handler="com.shinvest.ap.config.sql.VarcharToJSONObjectTypeHandler" />
+    <typeHandler javaType="org.json.JSONArray" jdbcType="VARCHAR" handler="com.shinvest.ap.config.sql.VarcharToJSONArrayTypeHandler" />
+  </typeHandlers>
+</configuration>

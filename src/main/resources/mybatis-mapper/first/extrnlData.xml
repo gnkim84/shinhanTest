@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shinvest.ap.app.extrnl.mapper.ExtrnlDataMapper">
+	<!-- 데이터타입(dataTy) filter 검색 -->
+	<!-- 데이터전송방식(dataTrnsmisMthd) filter 검색 -->
+	<!-- 데이터전송주기(dataTrnsmisCycle) filter 검색 ★★★데이터전송주기는 체크박스로 여러개를 선택할수 있다. ?(exist) 조건으로 조회하여야 한다. 단, ?? 두개로 해야 제대로 인식한다 -->
+	<!-- 외부기관명(srcSysNm),관리부서(mngDeptNm) like 검색 -->
+	<sql id="where">
+		<where>
+			<if test="filterDataTy != null and filterDataTy != ''">
+				AND data_ty = #{filterDataTy}
+			</if>
+			<if test="filterDataTrnsmisMthd != null and filterDataTrnsmisMthd != ''">
+				AND data_trnsmis_mthd = #{filterDataTrnsmisMthd}
+			</if>
+			<if test="filterDataTrnsmisCycle != null and filterDataTrnsmisCycle != ''">
+				AND data_trnsmis_cycle ?? #{filterDataTrnsmisCycle}
+			</if>
+			<if test="searchKey != '' and searchKey == 'ALL' and searchValue != ''">
+				AND (UPPER(src_sys_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%') OR UPPER(mng_dept_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%'))
+			</if>
+			<if test="searchKey != '' and searchKey == 'srcSysNm' and searchValue != ''">
+				AND UPPER(src_sys_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+			</if>
+			<if test="searchKey != '' and searchKey == 'mngDeptNm' and searchValue != ''">
+				AND UPPER(mng_dept_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+			</if>
+		</where>
+	</sql>
+
+    <sql id="order">
+        <if test="sortType != null and sortType != '' and sortDirection != null and sortDirection != ''">
+            ORDER BY a.${sortType} ${sortDirection}
+        </if>
+        <if test="sortType == null or sortType == ''">        
+	        ORDER BY a.rownum ASC
+        </if>
+    </sql>
+
+    <sql id="paging">
+limit #{pageSize} offset (#{page} - 1) * #{pageSize}
+    </sql>
+
+    <select id="selectList" resultType="com.shinvest.ap.app.extrnl.model.ExtrnlDataModel" parameterType="com.shinvest.ap.app.extrnl.model.ExtrnlDataModel">
+select * from (
+	select
+	    row_number() over(order by ted.rgst_dt desc) as rownum
+	  , ted.data_id
+	  , ted.src_sys_code
+	  , (SELECT code_nm FROM t_code WHERE group_id = 'SRC_SYS_CODE' AND code_id = ted.src_sys_code) AS src_sys_nm  
+	  , ted.data_ty
+	  , (SELECT code_nm FROM t_code WHERE group_id = 'DATA_TY' AND code_id = ted.data_ty) AS data_ty_nm
+	  , ted.data_nm
+	  , ted.data_dsc
+	  , ted.data_item
+	  , ted.data_lc
+	  , ted.rmk
+	  , ted.purchs_dept_code
+	  , (SELECT dept_nm FROM t_dept WHERE dept_code = ted.purchs_dept_code) AS purchs_dept_nm
+	  , ted.purchs_picr_id
+	  , (SELECT user_nm FROM t_user WHERE user_id = ted.purchs_picr_id) AS purchs_picr_nm
+	  , ted.mng_dept_code
+	  , (SELECT dept_nm FROM t_dept WHERE dept_code = ted.mng_dept_code) AS mng_dept_nm
+	  , ted.mng_picr_id
+	  , (SELECT user_nm FROM t_user WHERE user_id = ted.mng_picr_id) AS mng_picr_nm
+	  , ted.dept_info
+	  , ted.start_dt
+	  , ted.end_dt
+	  , ted.src_sys_url
+	  , ted.data_trnsmis_mthd
+	  , (SELECT code_nm FROM t_code WHERE group_id = 'DATA_TRNS_MTHD' AND code_id = ted.data_trnsmis_mthd) AS data_trnsmis_mthd_nm
+	  , ted.data_trnsmis_cycle
+	  --, (SELECT code_nm FROM t_code WHERE group_id = 'DATA_TRNS_CYCLE' AND code_id = ted.data_trnsmis_cycle) AS data_trnsmis_cycle_nm
+	  --, jsonb_array_elements((ted.data_trnsmis_cycle -> 'codeList')) ->> 'codeId' AS code_ID
+	  , ted.lang
+	  , (SELECT code_nm FROM t_code WHERE group_id = 'LANG' AND code_id = ted.lang) AS lang_nm
+	  , ted.rgst_se
+	  , ted.use_yn
+	  , ted.rgst_id
+	  , ted.rgst_dt
+	  , ted.modi_id
+	  , ted.modi_dt
+	from
+	    t_extrnl_data ted 
+	where
+	    use_yn = 'Y'
+) a
+<include refid="where"></include>
+<include refid="order"></include>
+<include refid="paging"></include>
+    </select>
+
+    <select id="selectListCount" resultType="int" parameterType="com.shinvest.ap.app.extrnl.model.ExtrnlDataModel">
+select count(*) from (
+	select
+	    row_number() over(order by ted.rgst_dt desc) as rownum
+	  , ted.data_id
+	  , ted.src_sys_code
+	  , (SELECT code_nm FROM t_code WHERE group_id = 'SRC_SYS_CODE' AND code_id = ted.src_sys_code) AS src_sys_nm  
+	  , ted.data_ty
+	  , ted.data_nm
+	  , ted.data_dsc
+	  , ted.data_item
+	  , ted.data_lc
+	  , ted.rmk
+	  , ted.purchs_dept_code
+	  , (SELECT dept_nm FROM t_dept WHERE dept_code = ted.purchs_dept_code) AS purchs_dept_nm
+	  , ted.purchs_picr_id
+	  , (SELECT user_nm FROM t_user WHERE user_id = ted.purchs_picr_id) AS purchs_picr_nm
+	  , ted.mng_dept_code
+	  , (SELECT dept_nm FROM t_dept WHERE dept_code = ted.mng_dept_code) AS mng_dept_nm
+	  , ted.mng_picr_id
+	  , (SELECT user_nm FROM t_user WHERE user_id = ted.mng_picr_id) AS mng_picr_nm
+	  , ted.dept_info
+	  , ted.start_dt
+	  , ted.end_dt
+	  , ted.src_sys_url
+	  , ted.data_trnsmis_mthd
+	  , ted.data_trnsmis_cycle
+	  , ted.lang
+	  , ted.rgst_se
+	  , ted.use_yn
+	  , ted.rgst_id
+	  , ted.rgst_dt
+	  , ted.modi_id
+	  , ted.modi_dt
+	from
+	    t_extrnl_data ted 
+	where
+	    use_yn = 'Y'
+) a
+<include refid="where"></include>
+    </select>
+
+    <select id="select" resultType="com.shinvest.ap.app.extrnl.model.ExtrnlDataModel" parameterType="com.shinvest.ap.app.extrnl.model.ExtrnlDataModel">
+select
+	  ted.data_id
+	, ted.src_sys_code
+	, (SELECT code_nm FROM t_code WHERE group_id = 'SRC_SYS_CODE' AND code_id = ted.src_sys_code) AS src_sys_nm  
+	, ted.data_ty
+	, (SELECT code_nm FROM t_code WHERE group_id = 'DATA_TY' AND code_id = ted.data_ty) AS data_ty_nm
+	, ted.data_nm
+	, ted.data_dsc
+	, ted.data_item
+	, ted.data_lc
+	, ted.rmk
+	, ted.purchs_dept_code
+	, (SELECT dept_nm FROM t_dept WHERE dept_code = ted.purchs_dept_code) AS purchs_dept_nm
+	, ted.purchs_picr_id
+	, (SELECT user_nm FROM t_user WHERE user_id = ted.purchs_picr_id) AS purchs_picr_nm
+	, ted.mng_dept_code
+	, (SELECT dept_nm FROM t_dept WHERE dept_code = ted.mng_dept_code) AS mng_dept_nm
+	, ted.mng_picr_id
+	, (SELECT user_nm FROM t_user WHERE user_id = ted.mng_picr_id) AS mng_picr_nm
+	, ted.dept_info
+	, ted.start_dt
+	, ted.end_dt
+	, ted.src_sys_url
+	, ted.data_trnsmis_mthd
+	, (SELECT code_nm FROM t_code WHERE group_id = 'DATA_TRNS_MTHD' AND code_id = ted.data_trnsmis_mthd) AS data_trnsmis_mthd_nm
+	, ted.data_trnsmis_cycle
+	  --, (SELECT code_nm FROM t_code WHERE group_id = 'DATA_TRNS_CYCLE' AND code_id = ted.data_trnsmis_cycle) AS data_trnsmis_cycle_nm
+	  --, jsonb_array_elements((ted.data_trnsmis_cycle -> 'codeList')) ->> 'codeId' AS code_ID
+	, ted.lang
+	, (SELECT code_nm FROM t_code WHERE group_id = 'LANG' AND code_id = ted.lang) AS lang_nm
+	, ted.rgst_se	
+	, ted.use_yn
+	, ted.rgst_id
+	, ted.rgst_dt
+	, ted.modi_id
+	, ted.modi_dt
+from
+    t_extrnl_data ted
+where
+	use_yn = 'Y'
+    and data_id = #{dataId}
+    </select>
+
+    <insert id="insert" parameterType="com.shinvest.ap.app.extrnl.model.ExtrnlDataModel">
+insert into t_extrnl_data (
+    data_id
+  , src_sys_code
+  , data_ty
+  , data_nm
+  , data_dsc
+  , data_item
+  , data_lc
+  , rmk
+  , purchs_dept_code
+  , purchs_picr_id
+  , mng_dept_code
+  , mng_picr_id
+  , dept_info
+  , start_dt
+  , end_dt
+  , src_sys_url
+  , data_trnsmis_mthd
+  , data_trnsmis_cycle
+  , lang
+  , rgst_se
+  , use_yn
+  , rgst_id
+  , rgst_dt
+  , modi_id
+  , modi_dt
+) values (
+    #{dataId}
+  , #{srcSysCode}    
+  , #{dataTy}
+  , #{dataNm}
+  , #{dataDsc}
+  , #{dataItem}
+  , #{dataLc}
+  , #{rmk}
+  , #{purchsDeptCode}
+  , #{purchsPicrId}
+  , #{mngDeptCode}
+  , #{mngPicrId}
+  , #{deptInfo}::jsonb
+  , now()
+  , #{endDt}
+  , #{srcSysUrl}
+  , #{dataTrnsmisMthd}
+  , #{dataTrnsmisCycle}::jsonb
+  , #{lang}
+  , #{rgstSe}  
+  , 'Y'
+  , #{rgstId}
+  , now()
+  , #{modiId}
+  , now()
+)
+    </insert>
+
+    <update id="update" parameterType="com.shinvest.ap.app.extrnl.model.ExtrnlDataModel">
+update t_extrnl_data set
+    src_sys_code = #{srcSysCode}
+  , data_ty = #{dataTy}
+  , data_nm = #{dataNm}
+  , data_dsc = #{dataDsc}
+  , data_item = #{dataItem}
+  , data_lc = #{dataLc}
+  , rmk = #{rmk}
+  , purchs_dept_code = #{purchsDeptCode}
+  , purchs_picr_id = #{purchsPicrId}
+  , mng_dept_code = #{mngDeptCode}
+  , mng_picr_id = #{mngPicrId}
+  , dept_info = #{deptInfo}::jsonb
+  , end_dt = #{endDt}
+  , src_sys_url = #{srcSysUrl}
+  , data_trnsmis_mthd = #{dataTrnsmisMthd}
+  , data_trnsmis_cycle = #{dataTrnsmisCycle}::jsonb
+  , lang = #{lang}
+  , modi_dt = now()
+  , modi_id = #{modiId}
+where
+    data_id = #{dataId}
+    </update>
+
+    <delete id="delete" parameterType="com.shinvest.ap.app.extrnl.model.ExtrnlDataModel">
+update t_extrnl_data set
+    use_yn = 'N'
+  , modi_dt = now()
+  , modi_id = #{modiId}
+where
+    data_id = #{dataId}
+    </delete>
+    
+    <select id="selectCycleList" resultType="com.shinvest.ap.app.extrnl.model.ExtrnlDataModel" parameterType="com.shinvest.ap.app.extrnl.model.ExtrnlDataModel">
+    select
+		ted.data_id,
+		(
+		select
+			array_to_string(array_agg(code_nm), ',')
+		from
+			(
+			select
+				(
+				select
+					code_nm
+				from
+					t_code
+				where
+					group_id = 'DATA_TRNS_CYCLE'
+					and code_id = a.jsonb_code_id) as code_nm
+			from
+				(
+				select
+					jsonb_array_elements_text(data_trnsmis_cycle) as jsonb_code_id
+				from
+					t_extrnl_data
+				where
+					data_id = ted.data_id ) a ) aa ) as data_trnsmis_cycle_nm
+		from
+			t_extrnl_data ted
+    </select>
+    
+    <select id="selectDeptList" resultType="com.shinvest.ap.app.extrnl.model.ExtrnlDataModel" parameterType="com.shinvest.ap.app.extrnl.model.ExtrnlDataModel">
+    	select
+			ted.data_id,
+			(
+			select
+				array_to_string(array_agg(dept_nm), ',')
+			from
+				(
+				select
+					(
+					select
+						dept_nm
+					from
+						t_dept
+					where
+						dept_code = a.jsonb_dept_code) as dept_nm
+				from
+					(
+					select
+						jsonb_array_elements_text(dept_info) as jsonb_dept_code
+					from
+						t_extrnl_data
+					where
+						data_id = ted.data_id ) a ) aa ) as deptInfoNm
+				, (
+			select
+				array_to_string(array_agg(dept_code), ',')
+			from
+				(
+				select
+					(
+					select
+						dept_code 
+					from
+						t_dept
+					where
+						dept_code = a.jsonb_dept_code) as dept_code
+				from
+					(
+					select
+						jsonb_array_elements_text(dept_info) as jsonb_dept_code
+					from
+						t_extrnl_data
+					where
+						data_id = ted.data_id ) a ) aa ) as deptInfoCode
+						from
+				t_extrnl_data ted
+		<if test="dataId != null and dataId != ''">
+			where ted.data_id = #{dataId}
+		</if>
+    </select>
+    
+    <insert id="insertMulti" parameterType="map">
+insert into t_extrnl_data (
+    data_id
+  , src_sys_code
+  , data_ty
+  , data_nm
+  , data_dsc
+  , data_item
+  , data_lc
+  , rmk
+  , purchs_dept_code
+  , purchs_picr_id
+  , mng_dept_code
+  , mng_picr_id
+  , dept_info
+  , start_dt
+  , end_dt
+  , src_sys_url
+  , data_trnsmis_mthd
+  , data_trnsmis_cycle
+  , lang
+  , rgst_se
+  , use_yn
+  , rgst_id
+  , rgst_dt
+  , modi_id
+  , modi_dt
+) 
+values
+<foreach item="data" collection="dataList" open="" separator="," close="">
+(
+    #{data.dataId}
+  , #{data.srcSysCode}    
+  , #{data.dataTy}
+  , #{data.dataNm}
+  , #{data.dataDsc}
+  , #{data.dataItem}
+  , #{data.dataLc}
+  , #{data.rmk}
+  , #{data.purchsDeptCode}
+  , #{data.purchsPicrId}
+  , #{data.mngDeptCode}
+  , #{data.mngPicrId}
+  , #{data.deptInfo}::jsonb
+  , #{data.startDt}
+  , #{data.endDt}
+  , #{data.srcSysUrl}
+  , #{data.dataTrnsmisMthd}
+  , #{data.dataTrnsmisCycle}::jsonb
+  , #{data.lang}
+  , #{data.rgstSe}  
+  , 'Y'
+  , #{data.rgstId}
+  , now()
+  , #{data.modiId}
+  , now()
+)
+</foreach>
+    </insert>    
+</mapper>

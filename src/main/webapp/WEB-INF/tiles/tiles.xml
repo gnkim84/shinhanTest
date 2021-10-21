@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+        "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+
+    <definition name="no-layout" template="/WEB-INF/views/layout/noLayout.jsp">
+        <put-attribute name="body" value="" />
+    </definition>
+    <definition name="login" extends="no-layout">
+        <put-attribute name="body" value="/WEB-INF/views/login.jsp" />
+    </definition>
+    <definition name="pop/reportView" extends="no-layout">
+        <put-attribute name="body" value="/WEB-INF/views/report/reportView.jsp" />
+    </definition>
+
+    <!-- main -->
+    <definition name="default-layout" template="/WEB-INF/views/layout/base.jsp" preparer="menuPreparer">
+        <put-attribute name="head" value="/WEB-INF/views/layout/head.jsp" />
+        <put-attribute name="header" value="/WEB-INF/views/layout/header.jsp" />
+        <put-attribute name="gnb" value="/WEB-INF/views/layout/gnb.jsp" />
+        <put-attribute name="body" value="" />
+        <put-attribute name="nav" value="" />
+        <!--
+        <put-attribute name="nav" value="/WEB-INF/views/layout/nav.jsp" />
+        -->
+        <put-attribute name="footer" value="/WEB-INF/views/layout/footer.jsp" />
+    </definition>
+    
+    <definition name="error/*" extends="default-layout">
+        <put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
+    </definition>
+    
+    <definition name="member/*" extends="default-layout">
+        <put-attribute name="body" value="/WEB-INF/views/member/{1}.jsp" />
+        <put-attribute name="nav" value="/WEB-INF/views/layout/nav.jsp" />
+    </definition>
+    <definition name="role/*" extends="default-layout">
+        <put-attribute name="body" value="/WEB-INF/views/role/{1}.jsp" />
+        <put-attribute name="nav" value="/WEB-INF/views/layout/nav.jsp" />
+    </definition>
+    <definition name="license/*" extends="default-layout">
+        <put-attribute name="body" value="/WEB-INF/views/license/{1}.jsp" />
+        <put-attribute name="nav" value="/WEB-INF/views/layout/nav.jsp" />
+    </definition>
+
+    <definition name="code/*" extends="default-layout">
+        <put-attribute name="body" value="/WEB-INF/views/code/{1}.jsp" />
+        <put-attribute name="nav" value="/WEB-INF/views/layout/nav.jsp" />
+    </definition>
+    
+    <definition name="menu/*" extends="default-layout">
+        <put-attribute name="body" value="/WEB-INF/views/menu/{1}.jsp" />
+        <put-attribute name="nav" value="/WEB-INF/views/layout/nav.jsp" />
+    </definition>
+
+    <definition name="extrnl/*" extends="default-layout">
+        <put-attribute name="body" value="/WEB-INF/views/extrnl/{1}.jsp" />
+        <put-attribute name="nav" value="/WEB-INF/views/layout/nav.jsp" />
+    </definition>
+    <definition name="wrkCat/*" extends="default-layout">
+        <put-attribute name="body" value="/WEB-INF/views/wrkCat/{1}.jsp" />
+        <put-attribute name="nav" value="/WEB-INF/views/layout/nav.jsp" />
+    </definition>
+    <definition name="board/*/*" extends="default-layout">
+        <put-attribute name="body" value="/WEB-INF/views/board/{1}/{2}.jsp" />
+        <put-attribute name="nav" value="/WEB-INF/views/layout/nav.jsp" />
+    </definition>
+
+    <definition name="project/*" extends="default-layout">
+        <put-attribute name="body" value="/WEB-INF/views/project/{1}.jsp" />
+        <put-attribute name="nav" value="/WEB-INF/views/layout/nav.jsp" />
+    </definition>
+    <definition name="report/*" extends="default-layout">
+        <put-attribute name="body" value="/WEB-INF/views/report/{1}.jsp" />
+        <put-attribute name="nav" value="/WEB-INF/views/layout/nav.jsp" />
+    </definition>
+    <definition name="monitor/*" extends="default-layout">
+        <put-attribute name="body" value="/WEB-INF/views/monitor/{1}.jsp" />
+        <put-attribute name="nav" value="/WEB-INF/views/layout/nav.jsp" />
+    </definition>
+    <definition name="audit/*" extends="default-layout">
+        <put-attribute name="body" value="/WEB-INF/views/audit/{1}.jsp" />
+        <put-attribute name="nav" value="/WEB-INF/views/layout/nav.jsp" />
+    </definition>    
+
+</tiles-definitions>

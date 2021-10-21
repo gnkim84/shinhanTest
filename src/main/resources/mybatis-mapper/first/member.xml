@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shinvest.ap.app.member.mapper.MemberMapper">
+
+	<sql id="searchMember">
+		<where>
+			<if test="searchKey != '' and searchKey == 'ALL' and searchValue != ''">
+				and (upper(u.user_id) like upper('%'||#{searchValue}||'%') or upper(u.user_nm) like upper('%'||#{searchValue}||'%')) or (upper(d.dept_nm) like upper('%'||#{searchValue}||'%'))
+			</if>
+			<if test="searchKey != '' and searchKey == 'userId' and searchValue != ''">
+				and (upper(u.user_id) like upper('%'||#{searchValue}||'%'))
+			</if>
+			<if test="searchKey != '' and searchKey == 'userNm' and searchValue != ''">
+				and (upper(u.user_nm) like upper('%'||#{searchValue}||'%'))
+			</if>
+			<if test="searchKey != '' and searchKey == 'deptNm' and searchValue != ''">
+				and (upper(d.dept_nm) like upper('%'||#{searchValue}||'%'))
+			</if>
+			<if test="searchKey != '' and searchKey == 'deptCode' and searchValue != ''">
+				and (upper(u.dept_code) = upper(#{searchValue}))
+			</if>
+			<if test="searchUseYn != null and searchUseYn != ''">
+				and u.use_yn = #{searchUseYn}
+			</if>
+			<if test="searchCompanyCode != null and searchCompanyCode != ''">
+				and u.company_code = #{searchCompanyCode}
+			</if>
+			<if test="searchRoleCode != null and searchRoleCode != ''">
+				and r.auth_id = #{searchRoleCode}
+			</if>			
+			<if test="deptCode != null and deptCode != ''">
+				and (upper(u.dept_code) = upper(#{deptCode}))
+			</if>
+			<if test="filterLockYn != null and filterLockYn != ''">
+				<choose>
+					<when test="filterLockYn == 'Y'.toString()">
+						coalesce(last_log_dt, now()) + interval '3 month' <![CDATA[<=]]> now()
+					</when>
+					<when test="filterLockYn == 'N'.toString()">
+						coalesce(last_log_dt, now()) + interval '3 month' <![CDATA[>]]> now()
+					</when>
+				</choose> 			
+			</if>			
+		</where>
+	</sql>
+
+	<sql id="paging">
+		limit #{pageSize} offset (#{page} - 1) * #{pageSize}
+	</sql>
+
+	<sql id="order">
+		<if test="sortType != null and sortType != '' and sortDirection != null and sortDirection != ''">
+		order by ${sortType} ${sortDirection}
+		</if>
+	</sql>
+
+	<select id="selectMemberList" resultType="com.shinvest.ap.app.member.model.MemberModel" parameterType="com.shinvest.ap.app.member.model.MemberCriteria">
+		select
+			row_number() over () as rownum,
+			u.user_id,
+			u.user_nm,
+			u.pstn_code,
+			p.pstn_nm,
+			u.dept_code,
+			d.dept_nm,
+			u.company_code,
+			(select code_nm from t_code where group_id = 'COMPANY_CODE' and code_id = u.company_code) company_nm,
+			u.adof_dept_code,
+			ad.dept_nm as adof_dept_nm,
+			r.auth_id,
+			r.use_yn as auth_use_yn,
+			a.auth_nm,
+			u.use_yn,
+			u.last_log_dt,
+			case
+			when coalesce(last_log_dt, now()) + interval '3 month' <![CDATA[>]]> now() then 'N'
+			else 'Y' end as lock_yn,
+			u.start_dt,
+			u.end_dt,
+			'N' as expired_yn,
+			u.rgst_id,
+			u.rgst_dt,
+			u.modi_id,
+			u.modi_dt,
+			u.file_url,
+			ttu.tableau_user_id,
+			COALESCE(tma.USE_YN,'N') AS MGR_YN,
+			msa.AUTH_ID AS MGR_AUTH_ID,
+			msa.AUTH_NM AS MGR_AUTH_NM
+		from
+			t_user u
+			left outer join t_pstn p on u.pstn_code = p.pstn_code
+			left outer join t_dept d on u.dept_code = d.dept_code
+			left outer join t_hdept h on u.hdept_code = h.hdept_code
+			left outer join t_dept ad on u.adof_dept_code = ad.dept_code
+			left outer join t_user_auth r on u.user_id = r.user_id
+			left outer join t_user_sys_auth a on r.auth_id = a.auth_id
+			left outer join t_tableau_user ttu on u.user_id = ttu.user_id and ttu.use_yn = 'Y'
+			left outer join t_mgr_auth tma on u.user_id = tma.user_id
+			left outer join t_mgr_sys_auth msa on tma.auth_id = msa.auth_id
+		<include refid="searchMember"></include>
+		<include refid="order"></include>
+		<include refid="paging"></include>
+	</select>
+
+	<select id="selectMemberListCount" resultType="int" parameterType="com.shinvest.ap.app.member.model.MemberCriteria">
+		select
+			count(*)
+		from
+			t_user u
+			left outer join t_pstn p on u.pstn_code = p.pstn_code
+			left outer join t_dept d on u.dept_code = d.dept_code
+			left outer join t_hdept h on u.hdept_code = h.hdept_code
+			left outer join t_dept ad on u.adof_dept_code = ad.dept_code
+			left outer join t_user_auth r on u.user_id = r.user_id
+			left outer join t_user_sys_auth a on r.auth_id = a.auth_id
+			left outer join t_tableau_user ttu on u.user_id = ttu.user_id and ttu.use_yn = 'Y'
+			left outer join t_mgr_auth tma on u.user_id = tma.user_id
+			left outer join t_mgr_sys_auth msa on tma.auth_id = msa.auth_id
+		<include refid="searchMember"></include>
+	</select>
+
+	<select id="selectMemberAllList" resultType="com.shinvest.ap.app.member.model.MemberModel" parameterType="com.shinvest.ap.app.member.model.MemberCriteria">
+		select
+			row_number() over () as rownum,
+			u.user_id,
+			u.user_nm,
+			u.pstn_code,
+			p.pstn_nm,
+			u.dept_code,
+			d.dept_nm,
+			u.company_code,
+			(select code_nm from t_code where group_id = 'COMPANY_CODE' and code_id = u.company_code) company_nm,
+			u.adof_dept_code,
+			ad.dept_nm as adof_dept_nm,
+			r.auth_id,
+			r.use_yn as auth_use_yn,
+			a.auth_nm,
+			u.use_yn,
+			u.last_log_dt,
+			case
+			when coalesce(last_log_dt, now()) + interval '3 month' <![CDATA[>]]> now() then 'Y'
+			else 'N' end as lock_yn,
+			u.start_dt,
+			u.end_dt,
+			'N' as expired_yn,
+			u.rgst_id,
+			u.rgst_dt,
+			u.modi_id,
+			u.modi_dt,
+			u.file_url,
+			ttu.tableau_user_id,
+			COALESCE(tma.USE_YN,'N') AS MGR_YN,
+			msa.AUTH_ID AS MGR_AUTH_ID,
+			msa.AUTH_NM AS MGR_AUTH_NM
+		from
+			t_user u
+			left outer join t_pstn p on u.pstn_code = p.pstn_code
+			left outer join t_dept d on u.dept_code = d.dept_code
+			left outer join t_hdept h on u.hdept_code = h.hdept_code
+			left outer join t_dept ad on u.adof_dept_code = ad.dept_code
+			left outer join t_user_auth r on u.user_id = r.user_id
+			left outer join t_user_sys_auth a on r.auth_id = a.auth_id
+			left outer join t_tableau_user ttu on u.user_id = ttu.user_id and ttu.use_yn = 'Y'
+			left outer join t_mgr_auth tma on u.user_id = tma.user_id
+			left outer join t_mgr_sys_auth msa on tma.auth_id = msa.auth_id
+		<include refid="searchMember"></include>
+		ORDER BY U.USER_NM
+	</select>
+	
+	<select id="selectMember" parameterType="com.shinvest.ap.app.member.model.MemberModel" resultType="com.shinvest.ap.app.member.model.MemberModel">
+		select
+			u.user_id,
+			u.user_nm,
+			u.pstn_code,
+			p.pstn_nm,
+			u.dept_code,
+			d.dept_nm,
+			u.company_code,
+			(select code_nm from t_code where group_id = 'COMPANY_CODE' and code_id = u.company_code) company_nm,
+			u.adof_dept_code,
+			ad.dept_nm as adof_dept_nm,
+			r.auth_id,
+			r.use_yn as auth_use_yn,
+			a.auth_nm,
+			u.use_yn,
+			u.last_log_dt,
+			case
+			when coalesce(last_log_dt, now()) + interval '3 month' <![CDATA[>]]> now() then 'Y'
+			else 'N' end as lock_yn,
+			u.start_dt,
+			u.end_dt,
+			'N' as expired_yn,
+			u.rgst_id,
+			u.rgst_dt,
+			u.modi_id,
+			u.modi_dt,
+			ttu.tableau_user_id,
+			COALESCE(tma.USE_YN,'N') AS MGR_YN,
+			msa.AUTH_ID AS MGR_AUTH_ID,
+			msa.AUTH_NM AS MGR_AUTH_NM
+		from
+			t_user u
+			left outer join t_pstn p on u.pstn_code = p.pstn_code
+			left outer join t_dept d on u.dept_code = d.dept_code
+			left outer join t_hdept h on u.hdept_code = h.hdept_code
+			left outer join t_dept ad on u.adof_dept_code = ad.dept_code
+			left outer join t_user_auth r on u.user_id = r.user_id
+			left outer join t_user_sys_auth a on r.auth_id = a.auth_id
+			left outer join t_tableau_user ttu on u.user_id = ttu.user_id and ttu.use_yn = 'Y'
+			left outer join t_mgr_auth tma on u.user_id = tma.user_id
+			left outer join t_mgr_sys_auth msa on tma.auth_id = msa.auth_id
+		where
+			u.user_id = #{userId}
+	</select>
+
+	<select id="selectMemberListCountForRoleId" resultType="int" parameterType="String">
+		select
+			count(*)
+		from
+			t_user_auth
+		where
+			auth_id = #{authId}
+	</select>
+
+	<insert id="upsertAuth" parameterType="com.shinvest.ap.app.member.model.MemberModel">
+		insert into t_user_auth (user_id, auth_id, use_yn, rgst_id, rgst_dt, modi_id, modi_dt)
+		values (#{userId}, #{authId}, #{useYn}, #{rgstId}, now(), #{modiId}, now())
+		on conflict (user_id) do update set
+			use_yn = #{useYn}
+		  , auth_id = #{authId}
+		  , modi_dt = now()
+		  , modi_id = #{modiId}
+	</insert>
+
+	<insert id="upsertMgrAuth" parameterType="com.shinvest.ap.app.member.model.MemberModel">
+		INSERT INTO T_MGR_AUTH (user_id, auth_id, use_yn, rgst_id, rgst_dt, modi_id, modi_dt)
+		values (#{userId}, #{authId}, #{useYn}, #{rgstId}, now(), #{modiId}, now())
+		on conflict (user_id) do update set
+			use_yn = #{useYn}
+		<if test="useYn == 'Y'.toString()">
+		  , auth_id = #{authId}
+		</if>	
+		  , modi_dt = now()
+		  , modi_id = #{modiId}
+	</insert>
+	
+	 <update id="update" parameterType="com.shinvest.ap.app.member.model.MemberModel">
+		update t_user
+		set
+			use_yn = #{useYn}
+		  , start_dt = #{startDt}
+		  , end_dt = #{endDt}
+		  , modi_dt = now()
+		  , modi_id = #{modiId}
+		where
+			user_id = #{userId}
+	</update>
+	
+	 <insert id="insertUserHst" parameterType="com.shinvest.ap.app.member.model.MemberModel">
+		insert into t_user_hist 
+		select 
+			current_timestamp hist_dt,
+			tu.user_id,
+			tu.user_nm,
+			tu.pstn_code,
+			(select tp.pstn_nm from t_pstn tp where tp.pstn_code = tu.pstn_code) pstn_nm,
+			tu.dept_code,
+			(select td.dept_nm from t_dept td where td.dept_code = tu.dept_code) dept_nm,	
+			tu.adof_dept_code,
+			(select td.dept_nm from t_dept td where td.dept_code = tu.adof_dept_code) adof_dept_nm,	
+			tu.hdept_code,
+			(select th.hdept_nm from t_hdept th where th.hdept_code = tu.hdept_code) hdept_nm,	
+			tu.company_code,
+			(select tc.code_nm from t_code tc where tc.group_id = 'COMPANY_CODE' and tc.code_id = tu.company_code) company_nm,
+			tu.duty_se,
+			tu.use_yn,
+			tu.last_log_dt,
+			tu.start_dt,
+			tu.end_dt,
+			tu.modi_se,
+			tu.rgst_id,
+			tu.rgst_dt,
+			tu.modi_id,
+			tu.modi_dt	
+		from 
+			t_user tu
+		where 
+			tu.user_id = #{userId}
+	</insert>	
+	
+	<select id="selectMemberListCountForMgrRoleId" resultType="int" parameterType="String">
+		SELECT
+			COUNT(1) AS CNT
+		FROM
+			T_MGR_AUTH
+		WHERE
+			AUTH_ID = #{authId}
+	</select>
+	
+	<insert id="insertMgrAuth" parameterType="com.shinvest.ap.app.member.model.MemberModel">
+		INSER INTO T_MGR_AUTH(
+    		  USER_ID
+    		, AUTH_ID
+    		, USE_YN
+    		, RGST_ID
+			, RGST_DT
+			, MODI_ID
+			, MODI_DT
+    	)VALUES(
+    		#{userId}
+    		, #{authId}
+    		, #{useYn}
+    		, #{rgstId}
+    		, NOW()
+    		, #{modiId}
+    		, NOW()
+    	)
+	</insert>
+
+	<update id="updateMgrAuth" parameterType="com.shinvest.ap.app.member.model.MemberModel">
+		UPDATE T_MGR_AUTH
+        SET
+			  AUTH_ID = #{authId}
+            , USE_YN = #{useYn}
+            , MODI_ID = #{modiId}
+            , MODI_DT = now()
+        WHERE
+            USER_ID = #{userId}
+	</update>
+
+	<delete id="deleteMgrAuth" parameterType="com.shinvest.ap.app.member.model.MemberModel">
+		UPDATE T_MGR_AUTH
+        SET
+            USE_YN = 'N'
+        WHERE USER_ID = #{userId}
+	</delete>
+	
+	<update id="unlockAccount" parameterType="com.shinvest.ap.app.member.model.MemberModel">
+		UPDATE t_user
+        SET
+            last_log_dt = NULL
+        WHERE USER_ID = #{userId}
+	</update>	
+
+</mapper>

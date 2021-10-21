@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>사용자 목록 | 사용자 관리 | 신한금융투자</title>
+	<link href="../css/common.css" rel="stylesheet" type="text/css" />
+	<script src="../js/jquery-1.12.4.js"></script>
+	<script src="../js/common.js"></script>
+</head>
+<body>
+	<header>
+		<h1><a href="#none">신한금융투자</a></h1>
+		<h2><button type="button">GOLDNET</button></a></h2>
+		<div class="head_search">
+			<form>
+				<fieldset>
+					<legend class="hidden">검색하기</legend>
+					<label class="hidden" for="head_search">검색</label>
+					<input type="text" id="head_search" placeholder="통합검색">
+					<button type="submit" name="button">검색하기</button>
+				</fieldset>
+			</form>
+		</div>
+		<dl class="head_dl">
+			<dt>김신한</dt>
+			<dd>신한금투 00부</dd>
+		</dl>
+	</header>
+	<ul class="gnb">
+		<li><a href="#none">사용자 관리</a></li>
+		<li><a href="#none">시스템 관리</a></li>
+		<li><a href="#none">프로젝트 관리</a></li>
+		<li><a href="#none">지원 관리</a></li>
+		<li><a href="#none">감사 관리</a></li>
+	</ul>
+	<div class="container">
+		<nav class="lnb">
+			<button type="button" name="button" class="btn_lnb">좌측메뉴 열기/닫기</button>
+			<div class="lnb_left">
+				<button type="button" name="button" class="btn_star">즐겨찾기</button>
+				<button type="button" name="button" class="btn_add">추가하기</button>
+			</div>
+			<div class="lnb_right">
+				<ul>
+					<li><a href="#none">프로젝트 관리</a></li>
+					<li><a href="#none">모델 자산화 신청</a></li>
+					<li><a href="#none">모델 배포 신청</a></li>
+					<li><a href="#none">프로젝트 자원 공유</a></li>
+					<li><a href="#none">분석 형상 관리</a></li>
+				</ul>
+			</div>
+		</nav>
+		<section class="content">
+			<div class="content_tit">
+				<h1 class="content_h1">사용자 목록</h1>
+				<ul class="content_nav">
+					<li>HOME</li>
+					<li>사용자 관리</li>
+					<li>사용자 목록</li>
+				</ul>
+			</div>
+
+			<div class="select_wrap tr">
+				<form>
+					<fieldset>
+						<div class="select">
+							<legend class="hidden">사용자 목록 종류 선택</legend>
+							<label class="hidden" for="data01">신한 종류 선택</label>
+							<select name="data01" id="data01">
+								<option value="신한금융투자">신한금융투자</option>
+								<option value="신한DB">신한DB</option>
+							</select>
+						</div>
+						<input type="submit" value="검색" class="btn small gray">
+					</fieldset>
+				</form>
+
+				<form>
+					<fieldset>
+						<div class="select">
+							<label class="hidden" for="data02">YES, NO 선택</label>
+							<select name="data02" id="data02">
+								<option value="YES">YES</option>
+								<option value="NO">NO</option>
+							</select>
+						</div>
+						<input type="submit" value="검색" class="btn small gray">
+					</fieldset>
+				</form>
+			</div>
+
+			<div class="tb01_line"></div>
+			<table class="tb01 cursor" summary="첫째줄은 순차적인 게시물 번호이며, 다른 칼럼들은 행사/사번, 성명, 직위, 조직명, 회사명, 사용권한, 최종접속, 사용기간, 사용여부에 대한 내용입니다.">
+				<caption class="hidden">사용자 목록</caption>
+				<colgroup>
+					<col style="width:6%">
+					<col style="width:10%">
+					<col style="width:7%">
+					<col style="width:7%">
+					<col style="width:11%">
+					<col style="width:11%">
+					<col style="width:11%">
+					<col style="width:15%">
+					<col style="width:15%">
+					<col style="width:7%">
+				</colgroup>
+				<thead>
+					<tr>
+						<th scope="col">No</th>
+						<th scope="col">
+							행번/사번
+							<div class="tb_btn">
+								<button type="button" class="btn_up">행번/사번 오름차순</button>
+								<button type="button" class="btn_down">행번/사번 내림차순</button>
+							</div>
+						</th>
+						<th scope="col">성명</th>
+						<th scope="col">직위</th>
+						<th scope="col">조직명</th>
+						<th scope="col">회사명</th>
+						<th scope="col">사용권한</th>
+						<th scope="col">
+							최종접속
+							<div class="tb_btn">
+								<button type="button" class="btn_up">최종접속 오름차순</button>
+								<button type="button" class="btn_down">최종접속 내림차순</button>
+							</div>
+						</th>
+						<th scope="col">
+							사용기간
+							<div class="tb_btn">
+								<button type="button" class="btn_up">사용기간 오름차순</button>
+								<button type="button" class="btn_down">사용기간 내림차순</button>
+							</div>
+						</th>
+						<th scope="col">사용여부</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td scope="row">1</td>
+						<td>12345</td>
+						<td>홍길동</td>
+						<td>대리</td>
+						<td>솔루션개발부</td>
+						<td>신한금융투자</td>
+						<td>일반사용자</td>
+						<td>2020.05.31 13:00:53</td>
+						<td>2020.05.31~2020.07.10</td>
+						<td>Y</td>
+					</tr>
+					<tr>
+						<td scope="row">2</td>
+						<td>12345</td>
+						<td>홍길동</td>
+						<td>대리</td>
+						<td>솔루션개발부</td>
+						<td>신한금융투자</td>
+						<td>일반사용자</td>
+						<td>2020.05.31 13:00:53</td>
+						<td>2020.05.31~2020.07.10</td>
+						<td>Y</td>
+					</tr>
+					<tr>
+						<td scope="row">3</td>
+						<td>12345</td>
+						<td>홍길동</td>
+						<td>대리</td>
+						<td>솔루션개발부</td>
+						<td>신한금융투자</td>
+						<td>일반사용자</td>
+						<td>2020.05.31 13:00:53</td>
+						<td>2020.05.31~2020.07.10</td>
+						<td>Y</td>
+					</tr>
+					<tr>
+						<td scope="row">4</td>
+						<td>12345</td>
+						<td>홍길동</td>
+						<td>대리</td>
+						<td>솔루션개발부</td>
+						<td>신한금융투자</td>
+						<td>일반사용자</td>
+						<td>2020.05.31 13:00:53</td>
+						<td>2020.05.31~2020.07.10</td>
+						<td>Y</td>
+					</tr>
+					<tr class="tb_old">
+						<td scope="row">5</td>
+						<td>12345</td>
+						<td>홍길동</td>
+						<td>대리</td>
+						<td>솔루션개발부</td>
+						<td>신한금융투자</td>
+						<td>일반사용자</td>
+						<td>2020.05.31 13:00:53</td>
+						<td>2020.05.31~2020.07.10</td>
+						<td>N</td>
+					</tr>
+					<tr>
+						<td scope="row">6</td>
+						<td>12345</td>
+						<td>홍길동</td>
+						<td>대리</td>
+						<td>솔루션개발부</td>
+						<td>신한금융투자</td>
+						<td>일반사용자</td>
+						<td>2020.05.31 13:00:53</td>
+						<td>2020.05.31~2020.07.10</td>
+						<td>Y</td>
+					</tr>
+					<tr>
+						<td scope="row">7</td>
+						<td>12345</td>
+						<td>홍길동</td>
+						<td>대리</td>
+						<td>솔루션개발부</td>
+						<td>신한금융투자</td>
+						<td>일반사용자</td>
+						<td>2020.05.31 13:00:53</td>
+						<td>2020.05.31~2020.07.10</td>
+						<td>Y</td>
+					</tr>
+					<tr>
+						<td scope="row">8</td>
+						<td>12345</td>
+						<td>홍길동</td>
+						<td>대리</td>
+						<td>솔루션개발부</td>
+						<td>신한금융투자</td>
+						<td>일반사용자</td>
+						<td>2020.05.31 13:00:53</td>
+						<td>2020.05.31~2020.07.10</td>
+						<td>Y</td>
+					</tr>
+					<tr>
+						<td scope="row">9</td>
+						<td>12345</td>
+						<td>홍길동</td>
+						<td>대리</td>
+						<td>솔루션개발부</td>
+						<td>신한금융투자</td>
+						<td>일반사용자</td>
+						<td>2020.05.31 13:00:53</td>
+						<td>2020.05.31~2020.07.10</td>
+						<td>Y</td>
+					</tr>
+					<tr>
+						<td scope="row">10</td>
+						<td>12345</td>
+						<td>홍길동</td>
+						<td>대리</td>
+						<td>솔루션개발부</td>
+						<td>신한금융투자</td>
+						<td>일반사용자</td>
+						<td>2020.05.31 13:00:53</td>
+						<td>2020.05.31~2020.07.10</td>
+						<td>Y</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div class="page">
+				<a href="#none" class="first">처음 목록으로 이동</a>
+				<a href="#none" class="prev">이전 목록으로 이동</a>
+				<a href="#none" class="on" title="현재 페이지">1</a>
+				<a href="#none">2</a>
+				<a href="#none">3</a>
+				<a href="#none">4</a>
+				<a href="#none">5</a>
+				<a href="#none">6</a>
+				<a href="#none">7</a>
+				<a href="#none">8</a>
+				<a href="#none">9</a>
+				<a href="#none">10</a>
+				<a href="#none" class="next">다음 목록으로 이동</a>
+				<a href="#none" class="last">마지막 목록으로 이동</a>
+			</div>
+
+			<form class="search_wrap">
+				<fieldset>
+					<legend class="hidden">사용자 목록 게시물 검색</legend>
+
+					<div class="select">
+						<label class="hidden" for="search01">게시물 갯수</label>
+						<select name="search01" id="search01">
+							<option value="10건">10건</option>
+						</select>
+					</div>
+
+					<div class="select">
+						<label class="hidden" for="search02">검색 항목</label>
+						<select name="search02" id="search02">
+							<option value="전체">전체</option>
+						</select>
+					</div>
+
+					<label class="hidden" for="search03">검색어</label>
+					<input type="text" class="input" id="search03" placeholder="검색어를 입력하세요.">
+					<input type="submit" value="검색" class="btn small grays">
+				</fieldset>
+			</form>
+
+		</section>
+	</div>
+</body>
+</html>

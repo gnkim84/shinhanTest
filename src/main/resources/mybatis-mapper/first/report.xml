@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shinvest.ap.app.report.mapper.ReportMapper">
+ 
+    <sql id="where">
+        <where>
+tr.project_id = tp.project_id
+            <if test="searchKey != '' and searchKey == 'ALL' and searchValue != ''">
+AND (UPPER(tp.project_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%') OR UPPER(tr.report_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%'))
+            </if>
+            <if test="searchKey != '' and searchKey == 'projectNm' and searchValue != ''">
+AND UPPER(tp.project_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+            </if>
+            <if test="searchKey != '' and searchKey == 'reportNm' and searchValue != ''">
+AND UPPER(tr.report_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+            </if>
+        </where>
+    </sql>
+    
+    <sql id="paging">
+    	<if test="pageSize != null and pageSize > 0">
+LIMIT #{pageSize} OFFSET (#{page} - 1) * #{pageSize}
+		</if>
+    </sql>
+
+    <sql id="order">
+        <if test="sortType != null and sortType != '' and sortDirection != null and sortDirection != ''">
+ORDER BY ${sortType} ${sortDirection}
+        </if>
+        <if test="sortType == null">        
+ORDER BY ord_seq ASC, modi_dt DESC
+        </if>
+    </sql>
+    
+    <sql id="from">
+FROM 
+    ptl.t_report tr,
+    ptl.t_project tp
+    </sql>
+    
+	<select id="selectProjectList" resultType="com.shinvest.ap.app.project.model.ProjectModel" parameterType="com.shinvest.ap.app.project.model.ProjectCriteria">
+WITH PCPT_INFO_ID AS
+(
+	SELECT
+		project_id,
+        project_nm,
+		jsonb_array_elements((pcpt_info -> 'list' -> 'userList')) ->> 'refId' AS USER_ID,
+		project_ty
+	FROM
+        ptl.t_project
+    <include refid="order" />
+)
+SELECT
+    project_id,
+    project_nm
+FROM
+    PCPT_INFO_ID
+WHERE
+    USER_ID = #{pcptInfo}::jsonb ->> 'userId'
+AND
+    project_ty = #{projectTy}
+        <include refid="paging" />
+    </select>
+    
+	<select id="selectReportList" resultType="com.shinvest.ap.app.report.model.ReportModel" parameterType="com.shinvest.ap.common.paging.Criteria">
+SELECT
+    tp.project_nm,
+    tr.report_id, 
+    tr.ver, 
+    tr.project_id, 
+    tr.report_nm, 
+    tr.report_cl, 
+    tr.report_ty, 
+	(SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'RPT_TY' AND CODE_ID = tr.report_ty AND USE_YN = 'Y') AS report_ty_nm,    
+    tr.report_se, 
+    tr.wrk_cat, 
+    tr.report_dsc, 
+    tr.report_stat, 
+    (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'RPT_STAT_CODE' AND CODE_ID = tr.report_stat AND USE_YN = 'Y') AS report_stat_nm,
+    tr.report_url, 
+    tr.report_attr, 
+    tr.preview_url, 
+    tr.file_id, 
+    tr.dept_code, 
+    tr.pcpt_info, 
+    tr.mgr_info, 
+    tr.pcpt_info AS old_pcpt_info, 
+    tr.mgr_info AS old_mgr_info, 
+    tr.sanctn_info, 
+    tr.rqst_resn, 
+    tr.execut_cycle, 
+    tr.active_yn, 
+    tr.atmc_aprv_yn, 
+    tr.ord_seq, 
+    tr.use_yn, 
+    tr.rgst_id, 
+    tr.rgst_dt, 
+    tr.modi_id, 
+    tr.modi_dt,
+    tr.tableau_workbook_id
+<include refid="from" />
+<include refid="where" />
+<include refid="order" />
+<include refid="paging" />  
+    </select>
+    
+    <select id="selectReportListCount" resultType="int" parameterType="com.shinvest.ap.common.paging.Criteria">
+        SELECT
+            COUNT(*)
+        <include refid="from" />
+        <include refid="where" />
+    </select>
+
+	<select id="selectReport" resultType="com.shinvest.ap.app.report.model.ReportModel" parameterType="com.shinvest.ap.app.report.model.ReportModel">
+SELECT
+    tr.report_id, 
+	tr.ver, 
+	tr.project_id, 
+	tr.report_nm, 
+	tr.report_cl, 
+	tr.report_ty, 
+	tr.report_se, 
+	tr.wrk_cat, 
+	tr.report_dsc, 
+	tr.report_stat, 
+	tr.report_url, 
+	tr.report_attr, 
+	tr.preview_url, 
+	tr.file_id, 
+	tr.dept_code,
+	td.dept_nm,
+	tr.pcpt_info, 
+	tr.mgr_info,
+	tr.pcpt_info AS old_pcpt_info, 
+    tr.mgr_info AS old_mgr_info,  
+	tr.sanctn_info, 
+	tr.rqst_resn, 
+	tr.execut_cycle, 
+	tr.active_yn, 
+	tr.atmc_aprv_yn, 
+	tr.ord_seq, 
+	tr.use_yn, 
+	tr.rgst_id, 
+	tr.rgst_dt, 
+	tr.modi_id, 
+	tr.modi_dt,
+	tr.dept_info,
+	tr.tableau_workbook_id,
+	tp.tableau_project_id,
+	tp.project_nm,
+	tr.dept_mng_yn,
+	tr.main_picr_id,
+	tum.user_nm as main_picr_nm,
+	tr.sub_picr_id, 
+	tus.user_nm as sub_picr_nm
+FROM 
+    ptl.t_report tr
+    INNER JOIN ptl.t_project tp
+    ON tr.project_id = tp.project_id
+    LEFT OUTER JOIN T_DEPT td
+    ON tr.DEPT_CODE = td.DEPT_CODE
+    LEFT OUTER JOIN T_USER tum
+    ON tr.MAIN_PICR_ID = tum.USER_ID
+    LEFT OUTER JOIN T_USER tus
+    ON tr.SUB_PICR_ID = tus.USER_ID
+WHERE report_id = #{reportId}
+	</select>
+	
+	<insert id="insertReport" parameterType="com.shinvest.ap.app.report.model.ReportModel">
+INSERT INTO ptl.t_report (
+    report_id,
+    ver,
+    project_id,
+    report_nm,
+    report_ty,
+	report_dsc,    
+	report_url,   
+	report_attr,    
+	preview_url,   
+    pcpt_info,
+    mgr_info,
+    dept_code,
+    wrk_cat,
+    sanctn_info,
+    active_yn,
+    atmc_aprv_yn,
+    rgst_id,
+    rgst_dt,
+    modi_id,
+    modi_dt,
+    tableau_workbook_id
+) VALUES (
+    #{reportId},
+    #{ver}::numeric,
+	#{projectId},
+	#{reportNm},
+	#{reportTy},
+	#{reportDsc},
+	#{reportUrl},
+	#{reportAttr}::jsonb,
+	#{previewUrl},	
+	#{pcptInfo}::jsonb,
+	#{mgrInfo}::jsonb,
+	#{deptCode},
+	#{wrkCat},
+	#{sanctnInfo},
+	#{activeYn},
+	#{atmcAprvYn},
+	#{rgstId},
+	now(),
+	#{modiId},
+	now(),
+	#{tableauWorkbookId}
+)
+	</insert>
+    
+	<update id="updateReport" parameterType="com.shinvest.ap.app.report.model.ReportModel">
+UPDATE ptl.t_report SET
+    project_id = #{projectId},
+    report_nm = #{reportNm},
+    report_ty = #{reportTy},
+	report_dsc = #{reportDsc},
+	report_url = #{reportUrl},
+	report_attr = #{reportAttr}::jsonb,
+	preview_url = #{previewUrl},	    
+    pcpt_info = #{pcptInfo}::jsonb,
+    mgr_info = #{mgrInfo}::jsonb,
+    dept_code = #{deptCode},
+    wrk_cat = #{wrkCat},
+    sanctn_info = #{sanctnInfo},
+    active_yn = #{activeYn},
+    atmc_aprv_yn = #{atmcAprvYn},
+    modi_id = #{modiId},
+    modi_dt = now(),
+    ver = ver + #{minorVer}::numeric,
+    tableau_workbook_id = #{tableauWorkbookId},
+    dept_mng_yn = #{deptMngYn},
+    rqst_resn = #{rqstResn},
+    main_picr_id = #{mainPicrId},
+    sub_picr_id = #{subPicrId},
+    dept_info = #{deptInfo}::jsonb
+WHERE
+    report_id = #{reportId}
+	</update>
+    
+    <!-- 수정필요 -->
+    <delete id="deleteReport" parameterType="com.shinvest.ap.app.report.model.ReportModel">
+DELETE FROM 
+    ptl.t_report
+WHERE
+    report_id = #{reportId}
+    </delete>   
+
+    <insert id="insertReportHst" parameterType="com.shinvest.ap.app.project.model.ProjectModel">
+INSERT INTO ptl.t_report_hist 
+SELECT
+    current_timestamp,
+    tr.report_id, 
+	tr.ver, 
+	tr.project_id, 
+	tr.report_nm, 
+	tr.report_cl, 
+	tr.report_ty, 
+	tr.report_se, 
+	tr.wrk_cat, 
+	tr.report_dsc, 
+	tr.report_stat, 
+	tr.report_url, 
+	tr.report_attr, 
+	tr.preview_url, 
+	tr.file_id, 
+	tr.dept_code, 
+	tr.pcpt_info, 
+	tr.mgr_info, 
+	tr.sanctn_info, 
+	tr.rqst_resn, 
+	tr.execut_cycle, 
+	tr.active_yn, 
+	tr.atmc_aprv_yn, 
+	tr.ord_seq, 
+	tr.use_yn, 
+	tr.rgst_id, 
+	tr.rgst_dt, 
+	tr.modi_id, 
+	tr.modi_dt,
+	tr.orgn_report_id,
+	tr.orgn_report_ver,
+	tr.dept_info,
+	tr.tableau_workbook_id,
+	tr.dept_mng_yn,
+	tr.view_cnt,
+	tr.main_picr_id,
+	tr.sub_picr_id
+FROM ptl.t_report tr
+WHERE tr.report_id = #{reportId}
+    </insert>
+    
+	<select id="selectTableauWorkbookList" resultType="map">
+		SELECT	
+			tableau_workbook_id, 
+			tableau_workbook_nm,
+			tableau_workbook_url
+		FROM
+			t_tableau_workbook
+		WHERE
+			use_yn = 'Y'
+		ORDER BY tableau_workbook_nm ASC
+	</select>
+	
+	<insert id="insertReportUserRole" parameterType="reportModel">
+		INSERT INTO T_REPORT_USER
+		(
+			  REPORT_ID
+			, VER
+			, REF_ID
+			, REF_TY
+			, ROLE_SE
+			, USE_YN
+			, RGST_ID
+			, MODI_ID
+		)VALUES(
+			  #{reportId}
+			, #{ver}::numeric + #{minorVer}::numeric 
+			, #{refId}
+			, #{refTy}
+			, #{roleSe}
+			, #{useYn}
+			, #{rgstId}
+			, #{modiId}
+		)
+		ON CONFLICT (REPORT_ID, VER, REF_ID, ROLE_SE, REF_TY) DO UPDATE SET
+			  USE_YN = #{useYn}
+			, MODI_DT = now()
+			, MODI_ID = #{modiId}
+	</insert>
+
+	<update id="updateReportUserRole" parameterType="reportModel">
+		UPDATE T_REPORT_USER
+		SET USE_YN = 'N'
+			, MODI_ID = #{modiId}
+		WHERE REPORT_ID = #{reportId}
+	</update>
+
+	<delete id="deleteReportUserRole" parameterType="reportModel">
+		DELETE FROM T_REPORT_USER
+		WHERE REPORT_ID = #{reportId}
+	</delete>
+	
+	<select id="selectReportUserRole" parameterType="reportModel" resultType="reportModel">
+		SELECT 
+			RU.REPORT_ID
+			, RU.VER
+			, RU.REF_ID
+			, RU.REF_TY
+			, RU.ROLE_SE
+			, RU.USE_YN
+			, RU.RGST_ID
+			, RU.RGST_DT
+			, RU.MODI_ID
+			, RU.MODI_DT
+		FROM T_REPORT_USER RU
+		<where>
+			<if test="reportId != null and reportId != ''">
+				AND RU.REPORT_ID = #{reportId}
+			</if>
+			<if test="refId != null and refId != ''">
+				AND RU.REF_ID = #{refId}
+			</if>
+			<if test="refTy != null and refTy != ''">
+				AND RU.REF_TY = #{refTy}
+			</if>
+			<if test="roleSe != null and roleSe != ''">
+				AND RU.ROLE_SE = #{roleSe}
+			</if>
+			<if test="useYn != null and useYn != ''">
+				AND RU.USE_YN = #{useYn}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectCheckReportUserRole" parameterType="reportModel" resultType="reportModel">
+		select A.report_id, case when coalesce(sum(A.authCnt::numeric),0) > 0  then 'Y' else 'N' end as authYn
+		FROM(
+			select
+				tu.report_id,	
+				case when COUNT(1) > 0  then '1' 
+					else '0'
+					end as authCnt
+			from t_report_user tu
+			left outer join t_report r
+			on tu.report_id = r.report_id
+			left outer join t_dept td
+			on tu.ref_id = td.dept_code
+			where tu.ref_ty != '3'
+			and r.use_yn = 'Y'
+			and r.active_yn = 'Y'
+			and tu.report_id = #{reportId}
+			and tu.use_yn = 'Y'
+			and (tu.ref_id = #{userId} or td.dept_code = #{deptCode})
+			group by tu.report_id
+			
+			union all
+			
+			select
+				tu.report_id,	
+				case when COUNT(1) > 0  then '1' 
+					else '0'
+					end as authCnt
+			from t_report_user tu
+			left outer join t_report r
+			on tu.report_id = r.report_id
+			inner join (
+						select gd.* from t_role_group rp
+						inner join t_role_group_dtl gd
+						on rp.group_id = gd.group_id
+						where rp.use_yn = 'Y'
+						) a
+			on tu.ref_id = a.group_id
+			left outer join t_dept td
+			on a.ref_id = td.dept_code
+			where tu.ref_ty = '3'
+			and r.use_yn = 'Y'
+			and r.active_yn = 'Y'
+			and tu.report_id = #{reportId}
+			and tu.use_yn = 'Y'
+			and (a.ref_id = #{userId} or td.dept_code = #{deptCode})
+			group by tu.report_id
+		) A
+		group by A.report_id
+	</select>
+	
+	<insert id="insertSelectReportUserRoleHist" parameterType="reportModel">
+		INSERT INTO T_REPORT_USER_HIST
+		SELECT
+			  CURRENT_TIMESTAMP
+			, REPORT_ID
+			, VER
+			, REF_ID
+			, REF_TY
+			, ROLE_SE
+			, USE_YN
+			, RGST_ID
+			, RGST_DT
+			, MODI_ID
+			, MODI_DT
+		FROM T_REPORT_USER
+		WHERE REPORT_ID = #{reportId}
+		AND VER = #{ver}::numeric
+	</insert>
+
+	<insert id="insertReportUserRoleHist" parameterType="reportModel">
+		INSERT INTO T_REPORT_USER_HIST
+		(
+			  HIST_DT
+			, REPORT_ID
+			, VER
+			, REF_ID
+			, REF_TY
+			, ROLE_SE
+			, USE_YN
+			, RGST_ID
+			, MODI_ID
+		)VALUES(
+			  CURRENT_TIMESTAMP
+			, #{reportId}
+			, #{ver}::numeric + #{minorVer}::numeric 
+			, #{refId}
+			, #{refTy}
+			, #{roleSe}
+			, #{useYn}
+			, #{rgstId}
+			, #{modiId}
+		)
+	</insert>
+</mapper>

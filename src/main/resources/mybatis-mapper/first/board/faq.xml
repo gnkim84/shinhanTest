@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shinvest.ap.app.board.mapper.FaqMapper">
+	<sql id="where">
+		<where>
+			<if test="searchKey != '' and searchKey == 'ALL' and searchValue != ''">
+				AND (UPPER(qstn) LIKE CONCAT('%',UPPER(#{searchValue}),'%') OR UPPER(answ) LIKE CONCAT('%',UPPER(#{searchValue}),'%'))
+			</if>
+			<if test="searchKey != '' and searchKey == 'QSTN' and searchValue != ''">
+				AND UPPER(qstn) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+			</if>
+			<if test="searchKey != '' and searchKey == 'ANSW' and searchValue != ''">
+				AND UPPER(answ) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+			</if>
+			<if test="searchUseYn != null and searchUseYn != ''">
+				AND USE_YN = #{searchUseYn}
+			</if>				
+		</where>
+	</sql>
+
+	<sql id="paging">
+		LIMIT #{pageSize} OFFSET (#{page} - 1) * #{pageSize}
+	</sql>
+
+	<sql id="order">
+		ORDER BY cl_code ASC, qstn ASC
+	</sql> 
+ 
+	<select id="selectFaqList" parameterType="com.shinvest.ap.common.paging.Criteria" resultType="com.shinvest.ap.app.board.model.FaqModel">
+		SELECT
+			faq.faq_id,
+			faq.cl_code,
+			(SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'FAQ_CAT' AND CODE_ID = faq.cl_code) AS faq_cate_nm,
+			faq.qstn,
+			faq.answ,
+			faq.ord_seq,
+			faq.file_id,
+			faq.use_yn,
+			faq.rgst_id,
+			faq.rgst_dt,
+			faq.modi_id,
+			faq.modi_dt,
+			faq.view_cnt
+		FROM 
+			ptl.t_bbs_faq faq
+		<include refid="where" />
+		<include refid="order" />
+		<include refid="paging" />			
+	</select>
+
+	<select id="selectFaqListCount" parameterType="com.shinvest.ap.common.paging.Criteria" resultType="int">
+		select
+			count(1)
+		from
+			ptl.t_bbs_faq faq
+		<include refid="where" />
+	</select>
+
+	<select id="selectFaq" parameterType="com.shinvest.ap.app.board.model.FaqModel" resultType="com.shinvest.ap.app.board.model.FaqModel">
+		SELECT
+			faq.faq_id,
+			faq.cl_code,
+			(SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'FAQ_CAT' AND CODE_ID = faq.cl_code) AS faq_cate_nm,
+			faq.qstn,
+			faq.answ,
+			faq.ord_seq,
+			faq.file_id,
+			faq.use_yn,
+			faq.rgst_id,
+			faq.rgst_dt,
+			faq.modi_id,
+			faq.modi_dt,
+			faq.view_cnt
+		FROM 
+			ptl.t_bbs_faq faq
+		WHERE
+			faq.faq_id = #{faqId}		
+	</select>
+	
+	<insert id="insertFaq" parameterType="com.shinvest.ap.app.board.model.FaqModel">
+		INSERT INTO ptl.t_bbs_faq (
+			faq_id,
+			cl_code,
+			qstn,
+			answ,
+			ord_seq,
+			file_id,
+			use_yn,
+			rgst_id,
+			rgst_dt,
+			modi_id,
+			modi_dt,
+			view_cnt
+		) VALUES (
+			#{faqId},
+			#{clCode},
+			#{qstn},
+			#{answ},
+			#{ordSeq},
+			#{fileId},
+			#{useYn},
+			#{rgstId},
+			now(),
+			#{modiId},
+			now(),
+			0
+		)
+	</insert>
+	
+	<update id="updateFaq" parameterType="com.shinvest.ap.app.board.model.FaqModel">
+		UPDATE
+			ptl.t_bbs_faq
+		SET
+			cl_code = #{clCode}
+		  , qstn = #{qstn}
+		  , answ = #{answ}
+		  , ord_seq = #{ordSeq}
+		  , file_id = #{fileId}	   
+		  , use_yn = #{useYn}
+		  , modi_dt = now()
+		  , modi_id = #{modiId}
+	   WHERE
+			faq_id = #{faqId}
+	</update>
+	
+	<update id="deleteFaq" parameterType="com.shinvest.ap.app.board.model.FaqModel">
+		UPDATE
+			ptl.t_bbs_faq
+		SET
+		  use_yn = 'N'
+		  , modi_dt = now()
+		  , modi_id = #{modiId}
+	   WHERE
+			faq_id = #{faqId}
+	</update>	
+	
+
+</mapper>

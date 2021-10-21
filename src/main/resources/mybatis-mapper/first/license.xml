@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shinvest.ap.app.license.mapper.LicenseMapper">
+
+    <sql id="paging">
+        limit #{pageSize} offset (#{page} - 1) * #{pageSize}
+    </sql>
+
+    <select id="selectList" resultType="com.shinvest.ap.app.license.model.LicenseModel" parameterType="com.shinvest.ap.common.paging.Criteria">
+        select
+            row_number() over () as rownum,
+            l.auth_id,
+            a.auth_nm,
+            l.license_id,
+            l.tableau_id,
+            l.tableau_pw,
+            l.aws_id,
+            l.aws_pw,
+            l.license_dsc,
+            l.use_yn,
+            l.rgst_id,
+            l.rgst_dt,
+            l.modi_id,
+            l.modi_dt
+        from
+            t_license l
+            left outer join t_user_sys_auth a on l.auth_id = a.auth_id
+        where
+            l.use_yn = 'Y'
+        <include refid="paging"></include>
+    </select>
+
+    <select id="selectListCount" resultType="int" parameterType="com.shinvest.ap.common.paging.Criteria">
+        select count(*)
+        from
+            t_license
+        where
+            use_yn = 'Y'
+    </select>
+
+    <select id="select" resultType="com.shinvest.ap.app.license.model.LicenseModel" parameterType="com.shinvest.ap.app.license.model.LicenseModel">
+        select
+            auth_id,
+            license_id,
+            tableau_id,
+            tableau_pw,
+            aws_id,
+            aws_pw,
+            license_dsc,
+            use_yn,
+            rgst_id,
+            rgst_dt,
+            modi_id,
+            modi_dt
+        from
+            t_license
+        where
+            auth_id = #{authId}
+        and
+            license_id = #{licenseId}
+    </select>
+
+    <!-- 라이선스관리에 데이터 등록시 권한ID별로 한건씩만 입력이 가능하게 현재 되어있습니다.
+         이부분은 요건에 따라서 권한별로 계정 매핑이 어떻게 변경될지에 따라서 변경될 수 도 있을거 같습니다. -->
+    <insert id="insert" parameterType="com.shinvest.ap.app.license.model.LicenseModel">
+        <selectKey resultType="String" keyProperty="licenseId" order="BEFORE">
+            select coalesce(MAX(license_id), '0') FROM t_license where auth_id = #{authId}
+        </selectKey>
+        insert into t_license (
+            auth_id,
+            license_id,
+            tableau_id,
+            tableau_pw,
+            aws_id,
+            aws_pw,
+            license_dsc,
+            use_yn,
+            rgst_id,
+            rgst_dt,
+            modi_id,
+            modi_dt
+        ) values (
+            #{authId}
+            , #{licenseId}
+            , #{tableauId}
+            , #{tableauPw}
+            , #{awsId}
+            , #{awsPw}
+            , #{licenseDsc}
+            , 'Y'
+            , #{rgstId}
+            , now()
+            , #{modiId}
+            , now()
+        )
+    </insert>
+
+    <update id="update" parameterType="com.shinvest.ap.app.license.model.LicenseModel">
+        update t_license
+        set
+            tableau_id = #{tableauId}
+            , tableau_pw = #{tableauPw}
+            , aws_id = #{awsId}
+            , aws_pw = #{awsPw}
+            , license_dsc = #{licenseDsc}
+            , modi_dt = now()
+            , modi_id = #{modiId}
+            , use_yn = 'Y'
+        where
+            auth_id = #{authId}
+        and
+            license_id = #{licenseId}
+    </update>
+
+    <update id="delete" parameterType="com.shinvest.ap.app.license.model.LicenseModel">
+        update t_license
+        set
+            use_yn = 'N'
+        where
+            auth_id = #{authId}
+          and
+            license_id = #{licenseId}
+    </update>
+</mapper>

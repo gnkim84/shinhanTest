@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>사용자 로그 | 사용자 관리 | 신한금융투자</title>
+	<link href="../css/common.css" rel="stylesheet" type="text/css" />
+	<script src="../js/jquery-1.12.4.js"></script>
+</head>
+
+<body>
+	<section class="content">
+
+		<div class="content_tit">
+			<h1 class="content_h1">사용자 로그</h1>
+			<ul class="content_nav">
+				<li>HOME</li>
+				<li>사용자 관리</li>
+				<li>사용자 로그</li>
+			</ul>
+		</div>
+
+    <div class="search_bg_wrap"><form>
+      <div class="input_date_wrap">
+        <div class="input_date">
+          <label class="hidden" for="date_befor">사용기간 시작 날짜</label><input type="text" class="input" id="date_befor" value="2020.10.13 02:20:10"><button type="button" class="btn_date">사용기간 시작 날짜 검색</button>
+        </div>
+        <div class="input_wave">~</div>
+        <div class="input_date">
+          <label class="hidden" for="date_after">사용기간 끝나는 날짜</label><input type="text" class="input" id="date_after" value="2020.10.13 02:20:10"><button type="button" class="btn_date">사용기간 끝나는 날짜 검색</button>
+        </div>
+      </div>
+      <input type="submit" value="검색" class="btn small grayr">
+    </form></div>
+
+		<div class="faq_all">총 62건</div>
+		<div class="tb01_line"></div>
+		<table class="tb01" summary="첫째줄은 순차적인 게시물 번호이며, 다른 칼럼들은 시간, 사용자, 접근로그에 대한 내용입니다.">
+			<caption class="hidden">사용자 로그 목록</caption>
+			<colgroup>
+				<col style="width:6%">
+				<col style="width:20%">
+				<col style="width:20%">
+				<col style="width:54%">
+			</colgroup>
+			<thead>
+				<tr>
+					<th scope="col">No</th>
+					<th scope="col">
+						시간
+						<div class="tb_btn">
+							<button type="button" class="btn_up">시간 오름차순</button>
+							<button type="button" class="btn_down">시간 내림차순</button>
+						</div>
+					</th>
+					<th scope="col">사용자</th>
+					<th scope="col">접근로그</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td scope="row">1</td>
+					<td>02:20:10.556 AM</td>
+					<td>홍길동</td>
+					<td>로그인</td>
+				</tr>
+				<tr>
+					<td scope="row">2</td>
+          <td>02:20:10.556 AM</td>
+					<td>홍길동</td>
+					<td>로그인</td>
+				</tr>
+				<tr>
+					<td scope="row">3</td>
+          <td>02:20:10.556 AM</td>
+					<td>홍길동</td>
+					<td>로그인</td>
+				</tr>
+				<tr>
+					<td scope="row">4</td>
+          <td>02:20:10.556 AM</td>
+					<td>홍길동</td>
+					<td>로그인</td>
+				</tr>
+				<tr>
+					<td scope="row">5</td>
+          <td>02:20:10.556 AM</td>
+					<td>홍길동</td>
+					<td>로그인</td>
+				</tr>
+				<tr>
+					<td scope="row">6</td>
+          <td>02:20:10.556 AM</td>
+					<td>홍길동</td>
+					<td>로그인</td>
+				</tr>
+				<tr>
+					<td scope="row">7</td>
+          <td>02:20:10.556 AM</td>
+					<td>홍길동</td>
+					<td>로그인</td>
+				</tr>
+				<tr>
+					<td scope="row">8</td>
+          <td>02:20:10.556 AM</td>
+					<td>홍길동</td>
+					<td>로그인</td>
+				</tr>
+				<tr>
+					<td scope="row">9</td>
+          <td>02:20:10.556 AM</td>
+					<td>홍길동</td>
+					<td>로그인</td>
+				</tr>
+				<tr>
+					<td scope="row">10</td>
+          <td>02:20:10.556 AM</td>
+					<td>홍길동</td>
+					<td>로그인</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<div class="page">
+			<a href="#none" class="first">처음 목록으로 이동</a>
+			<a href="#none" class="prev">이전 목록으로 이동</a>
+			<a href="#none" class="on" title="현재 페이지">1</a>
+			<a href="#none">2</a>
+			<a href="#none">3</a>
+			<a href="#none">4</a>
+			<a href="#none">5</a>
+			<a href="#none">6</a>
+			<a href="#none">7</a>
+			<a href="#none">8</a>
+			<a href="#none">9</a>
+			<a href="#none">10</a>
+			<a href="#none" class="next">다음 목록으로 이동</a>
+			<a href="#none" class="last">마지막 목록으로 이동</a>
+		</div>
+
+		<form class="search_wrap"><fieldset>
+			<legend class="hidden">사용자 목록 게시물 검색</legend>
+
+			<div class="select">
+				<label class="hidden" for="search01">게시물 갯수</label>
+				<select name="search01" id="search01">
+					<option value="10건">10건</option>
+				</select>
+			</div>
+
+			<div class="select">
+				<label class="hidden" for="search02">검색 항목</label>
+				<select name="search02" id="search02">
+					<option value="전체">전체</option>
+				</select>
+			</div>
+
+			<label class="hidden" for="search03">검색어</label>
+			<input type="text" class="input" id="search03" placeholder="검색어를 입력하세요.">
+			<input type="submit" value="검색" class="btn small grays">
+		</fieldset></form>
+
+	</section>
+</body>
+
+</html>

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shinvest.ap.app.project.mapper.ProjectMapper">
+ 
+    <sql id="where">
+        <where>
+            <if test="searchKey != '' and searchKey == 'ALL' and searchValue != ''">
+                AND UPPER(project_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%') OR UPPER(project_dsc) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+            </if>
+            <if test="searchKey != '' and searchKey == 'projectNm' and searchValue != ''">
+                AND UPPER(project_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+            </if>
+            <if test="searchKey != '' and searchKey == 'projectDsc' and searchValue != ''">
+                AND UPPER(project_dsc) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+            </if>
+            <if test="projectTy != '' and projectTy != null">
+                AND project_ty = #{projectTy}
+            </if>
+            <if test="projectSe != '' and projectSe != null">
+                AND project_se = #{projectSe}
+            </if>
+            <if test="projectStat != '' and projectStat != null">
+                AND project_stat = #{projectStat}
+            </if>
+        </where>
+    </sql>
+    
+    <sql id="paging">
+        LIMIT #{pageSize} OFFSET (#{page} - 1) * #{pageSize}
+    </sql>
+
+    <sql id="order">
+        <if test="sortType != null and sortType != '' and sortDirection != null and sortDirection != ''">
+            ORDER BY ${sortType} ${sortDirection}
+        </if>
+        <if test="sortType == null or sortType == ''">        
+	        ORDER BY ord_seq ASC, modi_dt DESC
+        </if>
+    </sql> 
+    
+	<select id="selectProjectList" resultType="com.shinvest.ap.app.project.model.ProjectModel" parameterType="com.shinvest.ap.app.project.model.ProjectCriteria">
+SELECT
+	project_id, 
+	ver, 
+	project_nm, 
+	project_cl, 
+	project_ty, 
+	project_se, 
+	dept_code, 
+	pcpt_info,
+	mgr_info, 
+	start_dt, 
+	end_dt, 
+	project_dsc, 
+	project_stat, 
+	ord_seq, 
+	use_yn, 
+	rgst_id, 
+	rgst_dt, 
+	modi_id, 
+	modi_dt
+FROM 
+	ptl.t_project
+        <include refid="where" />
+        <include refid="order" />
+        <include refid="paging" />  
+    </select>
+    
+    <select id="selectProjectListCount" resultType="int" parameterType="com.shinvest.ap.app.project.model.ProjectCriteria">
+SELECT COUNT(*)
+FROM ptl.t_project
+        <include refid="where" />
+    </select>
+
+	<select id="selectProject" resultType="com.shinvest.ap.app.project.model.ProjectModel" parameterType="com.shinvest.ap.app.project.model.ProjectModel">
+SELECT
+    project_id,
+	ver,
+	project_nm,
+	project_cl,
+	project_ty,
+	project_se,
+	dept_code,
+	pcpt_info,
+	mgr_info,
+	start_dt,
+	end_dt,
+	project_dsc,
+	project_stat,
+	rgst_id,
+	rgst_dt,
+	modi_id,
+	modi_dt,
+	ord_seq,
+	use_yn,
+	project_data,
+	dept_info,
+	tableau_project_id,
+	project_rsrc,
+	active_yn,
+	last_ver_yn,
+	aprv_stat,
+	main_picr_id,
+	sub_picr_id
+FROM 
+    ptl.t_project
+WHERE
+    project_id = #{projectId}
+	</select>
+	
+	<insert id="insertProject" parameterType="com.shinvest.ap.app.project.model.ProjectModel">
+INSERT INTO ptl.t_project (
+	project_id,
+	ver,
+	project_nm,
+	project_cl,
+	project_ty,
+	project_se,
+	dept_code,
+	pcpt_info,
+	mgr_info,
+	start_dt,
+	end_dt,
+	project_dsc,
+	project_stat,
+	rgst_id,
+	rgst_dt,
+	modi_id,
+	modi_dt,
+	ord_seq,
+	use_yn,
+	project_data,
+	dept_info,
+	tableau_project_id,
+	project_rsrc,
+	active_yn,
+	last_ver_yn,
+	aprv_stat,
+	main_picr_id,
+	sub_picr_id
+) VALUES (
+	#{projectId},
+	#{ver}::numeric,
+	#{projectNm},
+	#{projectCl},
+	#{projectTy},
+	#{projectSe},
+	#{deptCode},
+	#{pcptInfo}::jsonb,
+	#{mgrInfo}::jsonb,
+	to_timestamp(#{startDt}||' 00:00:00','YYYY-MM-DD HH24:MI:SS'),
+	to_timestamp(#{endDt}||' 23:59:59','YYYY-MM-DD HH24:MI:SS'),
+	#{projectDsc},
+	#{projectStat},
+	#{rgstId},
+	now(),
+	#{modiId},
+	now(),
+	#{ordSeq}::numeric,
+	#{useYn},
+	#{projectData}::jsonb,
+	#{deptInfo}::jsonb,
+	#{tableauProjectId},
+	#{projectRsrc}::jsonb,
+	#{activeYn},
+	#{lastVerYn},
+	#{aprvStat},
+	#{mainPicrId},
+	#{subPicrId}
+)
+	</insert>
+    
+	<update id="updateProject" parameterType="com.shinvest.ap.app.project.model.ProjectModel">
+UPDATE ptl.t_project SET
+	project_nm = #{projectNm},
+	project_ty = #{projectTy},
+	pcpt_info = #{pcptInfo}::jsonb,
+	mgr_info = #{mgrInfo}::jsonb,
+	start_dt = to_timestamp(#{startDt}||' 00:00:00','YYYY-MM-DD HH24:MI:SS'),
+	end_dt = to_timestamp(#{endDt}||' 23:59:59','YYYY-MM-DD HH24:MI:SS'),
+	project_dsc = #{projectDsc},
+	modi_id = #{modiId},
+	modi_dt = now(),
+	ord_seq = #{ordSeq},
+	use_yn = #{useYn},
+	ver = ver + #{ver}::numeric,
+	active_yn = #{activeYn},
+	project_rsrc = #{projectRsrc}::jsonb
+WHERE project_id = #{projectId}
+	</update>
+    
+    <!-- 수정필요 -->
+    <delete id="deleteProject" parameterType="com.shinvest.ap.app.project.model.ProjectModel">
+DELETE FROM ptl.t_project
+WHERE project_id = #{projectId}
+    </delete>   
+
+	<insert id="insertProjectHst" parameterType="com.shinvest.ap.app.project.model.ProjectModel">
+INSERT INTO ptl.t_project_hist 
+SELECT
+	current_timestamp,
+	tp.project_id,
+	tp.ver,
+	tp.project_nm,
+	tp.project_cl,
+	tp.project_ty,
+	tp.project_se,
+	tp.dept_code,
+	tp.pcpt_info,
+	tp.mgr_info,
+	tp.start_dt,
+	tp.end_dt,
+	tp.project_dsc,
+	tp.project_stat,
+	tp.ord_seq,
+	tp.use_yn,
+	tp.rgst_id,
+	tp.rgst_dt,
+	tp.modi_id,
+	tp.modi_dt	
+FROM t_project tp
+WHERE tp.project_id = #{projectId}
+	</insert>
+
+<insert id="insertProjectAprv" parameterType="projectModel">
+INSERT INTO ptl.t_project_aprv (
+	aprv_id,
+	project_id,
+	ver,
+	aprv_dt,
+	aprvr_id,
+	rqst_resn,
+	rjct_resn,
+	use_yn,
+	rgst_id,
+	modi_id,
+) VALUES (
+	#{aprvId},
+	#{projectId},
+	#{ver}::numeric,
+	#{aprvDt},
+	#{aprvrId},
+	#{rqstResn},
+	#{rjctResn},
+	#{useYn},
+	#{rgstId},
+	#{modiId},
+)
+	</insert>
+</mapper>
